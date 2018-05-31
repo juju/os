@@ -47,6 +47,9 @@ var getOSFromSeriesTests = []struct {
 	series: "opensuseleap",
 	want:   os.OpenSUSE,
 }, {
+	series: "kubernetes",
+	want:   os.Kubernetes,
+}, {
 	series: "genericlinux",
 	want:   os.GenericLinux,
 }, {
