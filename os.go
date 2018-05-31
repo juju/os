@@ -16,6 +16,7 @@ const (
 	CentOS
 	GenericLinux
 	OpenSUSE
+	Kubernetes
 )
 
 func (t OSType) String() string {
@@ -32,6 +33,8 @@ func (t OSType) String() string {
 		return "GenericLinux"
 	case OpenSUSE:
 		return "OpenSUSE"
+	case Kubernetes:
+		return "Kubernetes"
 	}
 	return "Unknown"
 }

@@ -101,6 +101,10 @@ var opensuseSeries = map[string]string{
 	"opensuseleap": "opensuse42",
 }
 
+var kubernetesSeries = map[string]string{
+	"kubernetes": "kubernetes",
+}
+
 var ubuntuSeries = map[string]string{
 	"precise": "12.04",
 	"quantal": "12.10",
@@ -232,6 +236,9 @@ func getOSFromSeries(series string) (os.OSType, error) {
 	}
 	if _, ok := opensuseSeries[series]; ok {
 		return os.OpenSUSE, nil
+	}
+	if _, ok := kubernetesSeries[series]; ok {
+		return os.Kubernetes, nil
 	}
 	if series == genericLinuxSeries {
 		return os.GenericLinux, nil
