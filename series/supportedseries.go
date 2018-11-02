@@ -74,6 +74,7 @@ var seriesVersions = map[string]string{
 	"artful":           "17.10",
 	"bionic":           "18.04",
 	"cosmic":           "18.10",
+	"disco":            "19.04",
 	"win2008r2":        "win2008r2",
 	"win2012hvr2":      "win2012hvr2",
 	"win2012hv":        "win2012hv",
@@ -121,6 +122,7 @@ var ubuntuSeries = map[string]string{
 	"artful":  "17.10",
 	"bionic":  "18.04",
 	"cosmic":  "18.10",
+	"disco":   "19.04",
 }
 
 // ubuntuLTS provides a lookup for current LTS series.  Like seriesVersions,
