@@ -107,34 +107,96 @@ var kubernetesSeries = map[string]string{
 	"kubernetes": "kubernetes",
 }
 
-var ubuntuSeries = map[string]string{
-	"precise": "12.04",
-	"quantal": "12.10",
-	"raring":  "13.04",
-	"saucy":   "13.10",
-	"trusty":  "14.04",
-	"utopic":  "14.10",
-	"vivid":   "15.04",
-	"wily":    "15.10",
-	"xenial":  "16.04",
-	"yakkety": "16.10",
-	"zesty":   "17.04",
-	"artful":  "17.10",
-	"bionic":  "18.04",
-	"cosmic":  "18.10",
-	"disco":   "19.04",
+// seriesVersion represents a ubuntu series that includes the version, if the
+// series is an LTS and the supported defines if Juju supports the series
+// version.
+type seriesVersion struct {
+	Version string
+	// LTS provides a lookup for current LTS series.  Like seriesVersions,
+	// the values here are current at the time of writing. On Ubuntu systems this
+	// map is updated by updateDistroInfo, using data from
+	// /usr/share/distro-info/ubuntu.csv to ensure we have the latest values.  On
+	// non-Ubuntu systems, these values provide a nice fallback option.
+	LTS       bool
+	Supported bool
 }
 
-// ubuntuLTS provides a lookup for current LTS series.  Like seriesVersions,
-// the values here are current at the time of writing. On Ubuntu systems this
-// map is updated by updateDistroInfo, using data from
-// /usr/share/distro-info/ubuntu.csv to ensure we have the latest values.  On
-// non-Ubuntu systems, these values provide a nice fallback option.
-var ubuntuLTS = map[string]bool{
-	"precise": true,
-	"trusty":  true,
-	"xenial":  true,
-	"bionic":  true,
+var ubuntuSeries = map[string]seriesVersion{
+	"precise": seriesVersion{
+		Version:   "12.04",
+		LTS:       true,
+		Supported: false,
+	},
+	"quantal": seriesVersion{
+		Version:   "12.10",
+		LTS:       false,
+		Supported: false,
+	},
+	"raring": seriesVersion{
+		Version:   "13.04",
+		LTS:       false,
+		Supported: false,
+	},
+	"saucy": seriesVersion{
+		Version:   "13.10",
+		LTS:       false,
+		Supported: false,
+	},
+	"trusty": seriesVersion{
+		Version:   "14.04",
+		LTS:       true,
+		Supported: true,
+	},
+	"utopic": seriesVersion{
+		Version:   "14.10",
+		LTS:       false,
+		Supported: true,
+	},
+	"vivid": seriesVersion{
+		Version:   "15.04",
+		LTS:       false,
+		Supported: true,
+	},
+	"wily": seriesVersion{
+		Version:   "15.10",
+		LTS:       false,
+		Supported: true,
+	},
+	"xenial": seriesVersion{
+		Version:   "16.04",
+		LTS:       true,
+		Supported: true,
+	},
+	"yakkety": seriesVersion{
+		Version:   "16.10",
+		LTS:       false,
+		Supported: true,
+	},
+	"zesty": seriesVersion{
+		Version:   "17.04",
+		LTS:       false,
+		Supported: true,
+	},
+	"artful": seriesVersion{
+		Version:   "17.10",
+		LTS:       false,
+		Supported: true,
+	},
+	"bionic": seriesVersion{
+		Version:   "18.04",
+		LTS:       true,
+		Supported: true,
+	},
+	"cosmic": seriesVersion{
+		Version:   "18.10",
+		LTS:       false,
+		Supported: true,
+	},
+	"disco": seriesVersion{
+		Version:   "19.04",
+		LTS:       false,
+		Supported: true,
+	},
 }
 
 // Windows versions come in various flavors:
@@ -339,8 +401,11 @@ func SupportedLts() []string {
 	updateSeriesVersionsOnce()
 
 	versions := []string{}
-	for k := range ubuntuLTS {
-		versions = append(versions, ubuntuSeries[k])
+	for _, version := range ubuntuSeries {
+		if !version.LTS {
+			continue
+		}
+		versions = append(versions, version.Version)
 	}
 	sort.Strings(versions)
 	sorted := []string{}
@@ -365,8 +430,11 @@ func LatestLts() string {
 	updateSeriesVersionsOnce()
 
 	var latest string
-	for k := range ubuntuLTS {
-		if ubuntuSeries[k] > ubuntuSeries[latest] {
+	for k, version := range ubuntuSeries {
+		if !version.LTS {
+			continue
+		}
+		if version.Version > ubuntuSeries[latest].Version {
 			latest = k
 		}
 	}

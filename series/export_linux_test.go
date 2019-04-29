@@ -9,9 +9,9 @@ var (
 	OSReleaseFile = &osReleaseFile
 )
 
-func SetUbuntuSeries(value map[string]string) func() {
+func HideUbuntuSeries() func() {
 	origSeries := ubuntuSeries
-	ubuntuSeries = value
+	ubuntuSeries = make(map[string]seriesVersion)
 	return func() {
 		ubuntuSeries = origSeries
 	}

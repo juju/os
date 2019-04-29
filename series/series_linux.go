@@ -32,7 +32,7 @@ func readSeries() (string, error) {
 func seriesFromOSRelease(values map[string]string) (string, error) {
 	switch values["ID"] {
 	case strings.ToLower(jujuos.Ubuntu.String()):
-		return getValue(ubuntuSeries, values["VERSION_ID"])
+		return getValueFromSeriesVersion(ubuntuSeries, values["VERSION_ID"])
 	case strings.ToLower(jujuos.CentOS.String()):
 		codename := fmt.Sprintf("%s%s", values["ID"], values["VERSION_ID"])
 		return getValue(centosSeries, codename)
@@ -49,6 +49,15 @@ func seriesFromOSRelease(values map[string]string) (string, error) {
 func getValue(from map[string]string, val string) (string, error) {
 	for serie, ver := range from {
 		if ver == val {
+			return serie, nil
+		}
+	}
+	return "unknown", errors.New("could not determine series")
+}
+
+func getValueFromSeriesVersion(from map[string]seriesVersion, val string) (string, error) {
+	for serie, version := range from {
+		if version.Version == val {
 			return serie, nil
 		}
 	}
@@ -99,6 +108,7 @@ func updateDistroInfo() error {
 
 	now := time.Now()
 	var foundPrecise bool
+	var seriesSupported bool
 	for _, fields := range records {
 		var version, series string
 		var release string
@@ -125,6 +135,10 @@ func updateDistroInfo() error {
 			}
 			foundPrecise = true
 		}
+		// we support anything that is trusty or greater.
+		if !seriesSupported && series == "trusty" {
+			seriesSupported = true
+		}
 
 		releaseDate, err := time.Parse("2006-01-02", release)
 		if err != nil {
@@ -135,12 +149,19 @@ func updateDistroInfo() error {
 		// The numeric version may contain a LTS moniker so strip that out.
 		trimmedVersion := strings.TrimSuffix(version, " LTS")
 		seriesVersions[series] = trimmedVersion
-		ubuntuSeries[series] = trimmedVersion
-		if trimmedVersion != version && !now.Before(releaseDate) {
+
+		var ltsRelease bool
+		if strings.HasSuffix(version, " LTS") && !now.Before(releaseDate) {
 			// We only record that a series is LTS if its release
 			// date has passed. This allows the series to be tested
 			// pre-release, without affecting default series.
-			ubuntuLTS[series] = true
+			ltsRelease = true
+		}
+
+		ubuntuSeries[series] = seriesVersion{
+			Version:   trimmedVersion,
+			LTS:       ltsRelease,
+			Supported: seriesSupported,
 		}
 	}
 	return nil
