@@ -115,9 +115,10 @@ type seriesVersion struct {
 	// LTS provides a lookup for current LTS series.  Like seriesVersions,
 	// the values here are current at the time of writing. On Ubuntu systems this
 	// map is updated by updateDistroInfo, using data from
-	// /usr/share/distro-info/ubuntu.csv to ensure we have the latest values.  On
+	// /usr/share/distro-info/ubuntu.csv to ensure we have the latest values. On
 	// non-Ubuntu systems, these values provide a nice fallback option.
-	LTS       bool
+	LTS bool
+	// Supported defines if Juju classifies the series as officially supported.
 	Supported bool
 }
 
@@ -474,6 +475,21 @@ func SupportedSeries() []string {
 	updateSeriesVersionsOnce()
 	var series []string
 	for s := range seriesVersions {
+		series = append(series, s)
+	}
+	return series
+}
+
+// SupportedJujuSeries returns a slice of just juju supported ubuntu series.
+func SupportedJujuSeries() []string {
+	seriesVersionsMutex.Lock()
+	defer seriesVersionsMutex.Unlock()
+	updateSeriesVersionsOnce()
+	var series []string
+	for s, version := range ubuntuSeries {
+		if !version.Supported {
+			continue
+		}
 		series = append(series, s)
 	}
 	return series
