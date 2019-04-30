@@ -120,82 +120,69 @@ type seriesVersion struct {
 	LTS bool
 	// Supported defines if Juju classifies the series as officially supported.
 	Supported bool
+	// Extended security maintenance for customers, extends the supported bool
+	// for how Juju classifies the series.
+	ESMSupported bool
 }
 
 var ubuntuSeries = map[string]seriesVersion{
 	"precise": seriesVersion{
-		Version:   "12.04",
-		LTS:       true,
-		Supported: false,
+		Version: "12.04",
 	},
 	"quantal": seriesVersion{
-		Version:   "12.10",
-		LTS:       false,
-		Supported: false,
+		Version: "12.10",
 	},
 	"raring": seriesVersion{
-		Version:   "13.04",
-		LTS:       false,
-		Supported: false,
+		Version: "13.04",
 	},
 	"saucy": seriesVersion{
-		Version:   "13.10",
-		LTS:       false,
-		Supported: false,
+		Version: "13.10",
 	},
 	"trusty": seriesVersion{
-		Version:   "14.04",
-		LTS:       true,
-		Supported: true,
+		Version:      "14.04",
+		LTS:          true,
+		ESMSupported: true,
 	},
 	"utopic": seriesVersion{
-		Version:   "14.10",
-		LTS:       false,
-		Supported: true,
+		Version: "14.10",
 	},
 	"vivid": seriesVersion{
-		Version:   "15.04",
-		LTS:       false,
-		Supported: true,
+		Version: "15.04",
 	},
 	"wily": seriesVersion{
-		Version:   "15.10",
-		LTS:       false,
-		Supported: true,
+		Version: "15.10",
 	},
 	"xenial": seriesVersion{
-		Version:   "16.04",
-		LTS:       true,
-		Supported: true,
+		Version:      "16.04",
+		LTS:          true,
+		Supported:    true,
+		ESMSupported: true,
 	},
 	"yakkety": seriesVersion{
-		Version:   "16.10",
-		LTS:       false,
-		Supported: true,
+		Version: "16.10",
 	},
 	"zesty": seriesVersion{
-		Version:   "17.04",
-		LTS:       false,
-		Supported: true,
+		Version: "17.04",
 	},
 	"artful": seriesVersion{
-		Version:   "17.10",
-		LTS:       false,
-		Supported: true,
+		Version: "17.10",
 	},
 	"bionic": seriesVersion{
-		Version:   "18.04",
-		LTS:       true,
-		Supported: true,
+		Version:      "18.04",
+		LTS:          true,
+		Supported:    true,
+		ESMSupported: true,
 	},
 	"cosmic": seriesVersion{
 		Version:   "18.10",
-		LTS:       false,
 		Supported: true,
 	},
 	"disco": seriesVersion{
 		Version:   "19.04",
-		LTS:       false,
+		Supported: true,
+	},
+	"eoan": seriesVersion{
+		Version:   "19.10",
 		Supported: true,
 	},
 }
@@ -488,6 +475,22 @@ func SupportedJujuSeries() []string {
 	var series []string
 	for s, version := range ubuntuSeries {
 		if !version.Supported {
+			continue
+		}
+		series = append(series, s)
+	}
+	return series
+}
+
+// ESMSupportedJujuSeries returns a slice of just juju extended security
+// maintenance supported ubuntu series.
+func ESMSupportedJujuSeries() []string {
+	seriesVersionsMutex.Lock()
+	defer seriesVersionsMutex.Unlock()
+	updateSeriesVersionsOnce()
+	var series []string
+	for s, version := range ubuntuSeries {
+		if !version.ESMSupported {
 			continue
 		}
 		series = append(series, s)

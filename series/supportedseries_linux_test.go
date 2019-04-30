@@ -77,8 +77,21 @@ func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.DistroInfo, filename)
 
-	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
+	expectedSeries := []string{"bionic", "cosmic", "disco", "eoan", "xenial"}
 	series := series.SupportedJujuSeries()
+	sort.Strings(series)
+	c.Assert(series, gc.DeepEquals, expectedSeries)
+}
+
+func (s *supportedSeriesSuite) TestESMSupportedJujuSeries(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "ubuntu.csv")
+	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+	s.PatchValue(series.DistroInfo, filename)
+
+	expectedSeries := []string{"bionic", "trusty", "xenial"}
+	series := series.ESMSupportedJujuSeries()
 	sort.Strings(series)
 	c.Assert(series, gc.DeepEquals, expectedSeries)
 }

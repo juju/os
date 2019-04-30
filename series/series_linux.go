@@ -20,6 +20,13 @@ var (
 	osReleaseFile = "/etc/os-release"
 )
 
+const (
+	// this is just for an approximation in an error case, when the eol
+	// date has a parse error.
+	day  = 24 * time.Hour
+	year = 365 * day
+)
+
 func readSeries() (string, error) {
 	values, err := jujuos.ReadOSRelease(osReleaseFile)
 	if err != nil {
@@ -108,10 +115,11 @@ func updateDistroInfo() error {
 
 	now := time.Now()
 	var foundPrecise bool
-	var seriesSupported bool
+	var nonLTSSupported bool
 	for _, fields := range records {
 		var version, series string
 		var release string
+		var eol, eolESM string
 		for i, field := range fields {
 			if i >= len(fieldNames) {
 				break
@@ -123,8 +131,14 @@ func updateDistroInfo() error {
 				series = field
 			case "release":
 				release = field
+			case "eol":
+				eol = field
+			case "eol-esm":
+				eolESM = field
 			}
 		}
+		// we ignore eol and eolESM as they're optional, as we can fall back to
+		// some dates if they are missing.
 		if version == "" || series == "" || release == "" {
 			// Ignore malformed line.
 			continue
@@ -135,15 +149,29 @@ func updateDistroInfo() error {
 			}
 			foundPrecise = true
 		}
-		// we support anything that is trusty or greater.
-		if !seriesSupported && series == "trusty" {
-			seriesSupported = true
+		// we support non-LTS releases after the current release, everything
+		// before the current release that is not an LTS is not supported.
+		if !nonLTSSupported && series == "bionic" {
+			nonLTSSupported = true
 		}
 
 		releaseDate, err := time.Parse("2006-01-02", release)
 		if err != nil {
 			// Ignore lines with invalid release dates.
 			continue
+		}
+
+		eolDate, err := time.Parse("2006-01-02", eol)
+		if err != nil {
+			// we should add 5 years to the release date in case of an error
+			// parsing the eol date.
+			eolDate = releaseDate.Add(5 * year)
+		}
+
+		eolESMDate, err := time.Parse("2006-01-02", eolESM)
+		if err != nil {
+			// fall back to the eolDate if none is provided in the csv.
+			eolESMDate = eolDate
 		}
 
 		// The numeric version may contain a LTS moniker so strip that out.
@@ -158,10 +186,24 @@ func updateDistroInfo() error {
 			ltsRelease = true
 		}
 
+		// work out if the series is supported or if the extended security
+		// maintenance is supported from the following release cycle
+		// documentation https://www.ubuntu.com/about/release-cycle
+		var supported bool
+		if (ltsRelease || nonLTSSupported) && now.Before(eolDate) {
+			supported = true
+		}
+
+		var esmSupported bool
+		if ltsRelease && now.Before(eolESMDate) {
+			esmSupported = true
+		}
+
 		ubuntuSeries[series] = seriesVersion{
-			Version:   trimmedVersion,
-			LTS:       ltsRelease,
-			Supported: seriesSupported,
+			Version:      trimmedVersion,
+			LTS:          ltsRelease,
+			Supported:    supported,
+			ESMSupported: esmSupported,
 		}
 	}
 	return nil
