@@ -190,12 +190,12 @@ func updateDistroInfo() error {
 		// maintenance is supported from the following release cycle
 		// documentation https://www.ubuntu.com/about/release-cycle
 		var supported bool
-		if (ltsRelease || nonLTSSupported) && now.Before(eolDate) {
+		if (ltsRelease || nonLTSSupported) && now.After(releaseDate) && now.Before(eolDate) {
 			supported = true
 		}
 
 		var esmSupported bool
-		if ltsRelease && now.Before(eolESMDate) {
+		if ltsRelease && now.After(releaseDate) && now.Before(eolESMDate) {
 			esmSupported = true
 		}
 

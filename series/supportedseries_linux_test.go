@@ -77,7 +77,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.DistroInfo, filename)
 
-	expectedSeries := []string{"bionic", "cosmic", "disco", "eoan", "xenial"}
+	expectedSeries := []string{"bionic", "cosmic", "disco", "xenial"}
 	series := series.SupportedJujuSeries()
 	sort.Strings(series)
 	c.Assert(series, gc.DeepEquals, expectedSeries)
