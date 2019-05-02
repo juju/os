@@ -115,7 +115,6 @@ func updateDistroInfo() error {
 
 	now := time.Now()
 	var foundPrecise bool
-	var nonLTSSupported bool
 	for _, fields := range records {
 		var version, series string
 		var release string
@@ -148,11 +147,6 @@ func updateDistroInfo() error {
 				continue
 			}
 			foundPrecise = true
-		}
-		// we support non-LTS releases after the current release, everything
-		// before the current release that is not an LTS is not supported.
-		if !nonLTSSupported && series == "bionic" {
-			nonLTSSupported = true
 		}
 
 		releaseDate, err := time.Parse("2006-01-02", release)
@@ -189,21 +183,11 @@ func updateDistroInfo() error {
 		// work out if the series is supported or if the extended security
 		// maintenance is supported from the following release cycle
 		// documentation https://www.ubuntu.com/about/release-cycle
-		var supported bool
-		if (ltsRelease || nonLTSSupported) && now.After(releaseDate) && now.Before(eolDate) {
-			supported = true
-		}
-
-		var esmSupported bool
-		if ltsRelease && now.After(releaseDate) && now.Before(eolESMDate) {
-			esmSupported = true
-		}
-
 		ubuntuSeries[series] = seriesVersion{
 			Version:      trimmedVersion,
 			LTS:          ltsRelease,
-			Supported:    supported,
-			ESMSupported: esmSupported,
+			Supported:    now.After(releaseDate) && now.Before(eolDate),
+			ESMSupported: ltsRelease && now.After(releaseDate) && now.Before(eolESMDate),
 		}
 	}
 	return nil
