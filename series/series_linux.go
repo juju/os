@@ -63,9 +63,9 @@ func getValue(from map[string]string, val string) (string, error) {
 }
 
 func getValueFromSeriesVersion(from map[string]seriesVersion, val string) (string, error) {
-	for serie, version := range from {
+	for s, version := range from {
 		if version.Version == val {
-			return serie, nil
+			return s, nil
 		}
 	}
 	return "unknown", errors.New("could not determine series")
