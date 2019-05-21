@@ -9,9 +9,12 @@ var (
 	OSReleaseFile = &osReleaseFile
 )
 
-func SetUbuntuSeries(value map[string]string) func() {
+// HideUbuntuSeries hides the global state of the ubuntu series for tests. The
+// function returns a closure, that puts the global state back once called.
+// This is not concurrent safe.
+func HideUbuntuSeries() func() {
 	origSeries := ubuntuSeries
-	ubuntuSeries = value
+	ubuntuSeries = make(map[string]seriesVersion)
 	return func() {
 		ubuntuSeries = origSeries
 	}

@@ -107,34 +107,84 @@ var kubernetesSeries = map[string]string{
 	"kubernetes": "kubernetes",
 }
 
-var ubuntuSeries = map[string]string{
-	"precise": "12.04",
-	"quantal": "12.10",
-	"raring":  "13.04",
-	"saucy":   "13.10",
-	"trusty":  "14.04",
-	"utopic":  "14.10",
-	"vivid":   "15.04",
-	"wily":    "15.10",
-	"xenial":  "16.04",
-	"yakkety": "16.10",
-	"zesty":   "17.04",
-	"artful":  "17.10",
-	"bionic":  "18.04",
-	"cosmic":  "18.10",
-	"disco":   "19.04",
+// seriesVersion represents a ubuntu series that includes the version, if the
+// series is an LTS and the supported defines if Juju supports the series
+// version.
+type seriesVersion struct {
+	Version string
+	// LTS provides a lookup for current LTS series.  Like seriesVersions,
+	// the values here are current at the time of writing. On Ubuntu systems this
+	// map is updated by updateDistroInfo, using data from
+	// /usr/share/distro-info/ubuntu.csv to ensure we have the latest values. On
+	// non-Ubuntu systems, these values provide a nice fallback option.
+	LTS bool
+	// Supported defines if Juju classifies the series as officially supported.
+	Supported bool
+	// Extended security maintenance for customers, extends the supported bool
+	// for how Juju classifies the series.
+	ESMSupported bool
 }
 
-// ubuntuLTS provides a lookup for current LTS series.  Like seriesVersions,
-// the values here are current at the time of writing. On Ubuntu systems this
-// map is updated by updateDistroInfo, using data from
-// /usr/share/distro-info/ubuntu.csv to ensure we have the latest values.  On
-// non-Ubuntu systems, these values provide a nice fallback option.
-var ubuntuLTS = map[string]bool{
-	"precise": true,
-	"trusty":  true,
-	"xenial":  true,
-	"bionic":  true,
+var ubuntuSeries = map[string]seriesVersion{
+	"precise": seriesVersion{
+		Version: "12.04",
+	},
+	"quantal": seriesVersion{
+		Version: "12.10",
+	},
+	"raring": seriesVersion{
+		Version: "13.04",
+	},
+	"saucy": seriesVersion{
+		Version: "13.10",
+	},
+	"trusty": seriesVersion{
+		Version:      "14.04",
+		LTS:          true,
+		ESMSupported: true,
+	},
+	"utopic": seriesVersion{
+		Version: "14.10",
+	},
+	"vivid": seriesVersion{
+		Version: "15.04",
+	},
+	"wily": seriesVersion{
+		Version: "15.10",
+	},
+	"xenial": seriesVersion{
+		Version:      "16.04",
+		LTS:          true,
+		Supported:    true,
+		ESMSupported: true,
+	},
+	"yakkety": seriesVersion{
+		Version: "16.10",
+	},
+	"zesty": seriesVersion{
+		Version: "17.04",
+	},
+	"artful": seriesVersion{
+		Version: "17.10",
+	},
+	"bionic": seriesVersion{
+		Version:      "18.04",
+		LTS:          true,
+		Supported:    true,
+		ESMSupported: true,
+	},
+	"cosmic": seriesVersion{
+		Version:   "18.10",
+		Supported: true,
+	},
+	"disco": seriesVersion{
+		Version:   "19.04",
+		Supported: true,
+	},
+	"eoan": seriesVersion{
+		Version:   "19.10",
+		Supported: true,
+	},
 }
 
 // Windows versions come in various flavors:
@@ -339,8 +389,11 @@ func SupportedLts() []string {
 	updateSeriesVersionsOnce()
 
 	versions := []string{}
-	for k := range ubuntuLTS {
-		versions = append(versions, ubuntuSeries[k])
+	for _, version := range ubuntuSeries {
+		if !version.LTS {
+			continue
+		}
+		versions = append(versions, version.Version)
 	}
 	sort.Strings(versions)
 	sorted := []string{}
@@ -365,8 +418,11 @@ func LatestLts() string {
 	updateSeriesVersionsOnce()
 
 	var latest string
-	for k := range ubuntuLTS {
-		if ubuntuSeries[k] > ubuntuSeries[latest] {
+	for k, version := range ubuntuSeries {
+		if !version.LTS {
+			continue
+		}
+		if version.Version > ubuntuSeries[latest].Version {
 			latest = k
 		}
 	}
@@ -406,6 +462,37 @@ func SupportedSeries() []string {
 	updateSeriesVersionsOnce()
 	var series []string
 	for s := range seriesVersions {
+		series = append(series, s)
+	}
+	return series
+}
+
+// SupportedJujuSeries returns a slice of just juju supported ubuntu series.
+func SupportedJujuSeries() []string {
+	seriesVersionsMutex.Lock()
+	defer seriesVersionsMutex.Unlock()
+	updateSeriesVersionsOnce()
+	var series []string
+	for s, version := range ubuntuSeries {
+		if !version.Supported {
+			continue
+		}
+		series = append(series, s)
+	}
+	return series
+}
+
+// ESMSupportedJujuSeries returns a slice of just juju extended security
+// maintenance supported ubuntu series.
+func ESMSupportedJujuSeries() []string {
+	seriesVersionsMutex.Lock()
+	defer seriesVersionsMutex.Unlock()
+	updateSeriesVersionsOnce()
+	var series []string
+	for s, version := range ubuntuSeries {
+		if !version.ESMSupported {
+			continue
+		}
 		series = append(series, s)
 	}
 	return series

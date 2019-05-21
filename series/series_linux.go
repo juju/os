@@ -20,6 +20,13 @@ var (
 	osReleaseFile = "/etc/os-release"
 )
 
+const (
+	// this is just for an approximation in an error case, when the eol
+	// date has a parse error.
+	day  = 24 * time.Hour
+	year = 365 * day
+)
+
 func readSeries() (string, error) {
 	values, err := jujuos.ReadOSRelease(osReleaseFile)
 	if err != nil {
@@ -32,7 +39,7 @@ func readSeries() (string, error) {
 func seriesFromOSRelease(values map[string]string) (string, error) {
 	switch values["ID"] {
 	case strings.ToLower(jujuos.Ubuntu.String()):
-		return getValue(ubuntuSeries, values["VERSION_ID"])
+		return getValueFromSeriesVersion(ubuntuSeries, values["VERSION_ID"])
 	case strings.ToLower(jujuos.CentOS.String()):
 		codename := fmt.Sprintf("%s%s", values["ID"], values["VERSION_ID"])
 		return getValue(centosSeries, codename)
@@ -50,6 +57,15 @@ func getValue(from map[string]string, val string) (string, error) {
 	for serie, ver := range from {
 		if ver == val {
 			return serie, nil
+		}
+	}
+	return "unknown", errors.New("could not determine series")
+}
+
+func getValueFromSeriesVersion(from map[string]seriesVersion, val string) (string, error) {
+	for s, version := range from {
+		if version.Version == val {
+			return s, nil
 		}
 	}
 	return "unknown", errors.New("could not determine series")
@@ -102,6 +118,7 @@ func updateDistroInfo() error {
 	for _, fields := range records {
 		var version, series string
 		var release string
+		var eol, eolESM string
 		for i, field := range fields {
 			if i >= len(fieldNames) {
 				break
@@ -113,8 +130,14 @@ func updateDistroInfo() error {
 				series = field
 			case "release":
 				release = field
+			case "eol":
+				eol = field
+			case "eol-esm":
+				eolESM = field
 			}
 		}
+		// we ignore eol and eolESM as they're optional, as we can fall back to
+		// some dates if they are missing.
 		if version == "" || series == "" || release == "" {
 			// Ignore malformed line.
 			continue
@@ -132,15 +155,39 @@ func updateDistroInfo() error {
 			continue
 		}
 
+		eolDate, err := time.Parse("2006-01-02", eol)
+		if err != nil {
+			// we should add 5 years to the release date in case of an error
+			// parsing the eol date.
+			eolDate = releaseDate.Add(5 * year)
+		}
+
+		eolESMDate, err := time.Parse("2006-01-02", eolESM)
+		if err != nil {
+			// fall back to the eolDate if none is provided in the csv.
+			eolESMDate = eolDate
+		}
+
 		// The numeric version may contain a LTS moniker so strip that out.
 		trimmedVersion := strings.TrimSuffix(version, " LTS")
 		seriesVersions[series] = trimmedVersion
-		ubuntuSeries[series] = trimmedVersion
-		if trimmedVersion != version && !now.Before(releaseDate) {
+
+		var ltsRelease bool
+		if strings.HasSuffix(version, " LTS") && !now.Before(releaseDate) {
 			// We only record that a series is LTS if its release
 			// date has passed. This allows the series to be tested
 			// pre-release, without affecting default series.
-			ubuntuLTS[series] = true
+			ltsRelease = true
+		}
+
+		// work out if the series is supported or if the extended security
+		// maintenance is supported from the following release cycle
+		// documentation https://www.ubuntu.com/about/release-cycle
+		ubuntuSeries[series] = seriesVersion{
+			Version:      trimmedVersion,
+			LTS:          ltsRelease,
+			Supported:    now.After(releaseDate) && now.Before(eolDate),
+			ESMSupported: ltsRelease && now.After(releaseDate) && now.Before(eolESMDate),
 		}
 	}
 	return nil

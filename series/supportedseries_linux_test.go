@@ -35,7 +35,7 @@ func (s *supportedSeriesSuite) TestSupportedSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.DistroInfo, filename)
 
-	expectedSeries := []string{"precise", "quantal", "raring", "saucy"}
+	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
 	series := series.SupportedSeries()
 	sort.Strings(series)
 	c.Assert(series, gc.DeepEquals, expectedSeries)
@@ -48,7 +48,7 @@ func (s *supportedSeriesSuite) TestUpdateSeriesVersions(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.DistroInfo, filename)
 
-	expectedSeries := []string{"precise", "quantal", "raring", "saucy"}
+	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
 	checkSeries := func() {
 		series := series.SupportedSeries()
 		sort.Strings(series)
@@ -64,14 +64,42 @@ func (s *supportedSeriesSuite) TestUpdateSeriesVersions(c *gc.C) {
 	checkSeries()
 
 	expectedSeries = append([]string{"ornery"}, expectedSeries...)
-	expectedSeries = append(expectedSeries, "trusty")
+	expectedSeries = append(expectedSeries, "firewolf")
+	sort.Strings(expectedSeries)
 	series.UpdateSeriesVersions()
 	checkSeries()
 }
 
+func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "ubuntu.csv")
+	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+	s.PatchValue(series.DistroInfo, filename)
+
+	expectedSeries := []string{"bionic", "cosmic", "disco", "xenial"}
+	series := series.SupportedJujuSeries()
+	sort.Strings(series)
+	c.Assert(series, gc.DeepEquals, expectedSeries)
+}
+
+func (s *supportedSeriesSuite) TestESMSupportedJujuSeries(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "ubuntu.csv")
+	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+	s.PatchValue(series.DistroInfo, filename)
+
+	expectedSeries := []string{"bionic", "trusty", "xenial"}
+	series := series.ESMSupportedJujuSeries()
+	sort.Strings(series)
+	c.Assert(series, gc.DeepEquals, expectedSeries)
+}
+
 func (s *supportedSeriesSuite) TestOSSeries(c *gc.C) {
-	cleanup := series.SetUbuntuSeries(make(map[string]string))
-	defer cleanup()
+	restore := series.HideUbuntuSeries()
+	defer restore()
+
 	d := c.MkDir()
 	filename := filepath.Join(d, "ubuntu.csv")
 	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
@@ -83,7 +111,7 @@ func (s *supportedSeriesSuite) TestOSSeries(c *gc.C) {
 	c.Assert(osType, gc.Equals, os.Ubuntu)
 }
 
-const distInfoData = `version,codename,series,created,release,eol,eol-server
+const distInfoData = `version,codename,series,created,release,eol,eol-server,eol-esm
 4.10,Warty Warthog,warty,2004-03-05,2004-10-20,2006-04-30
 5.04,Hoary Hedgehog,hoary,2004-10-20,2005-04-08,2006-10-31
 5.10,Breezy Badger,breezy,2005-04-08,2005-10-12,2007-04-13
@@ -99,13 +127,25 @@ const distInfoData = `version,codename,series,created,release,eol,eol-server
 10.10,Maverick Meerkat,maverick,2010-04-29,2010-10-10,2012-04-10
 11.04,Natty Narwhal,natty,2010-10-10,2011-04-28,2012-10-28
 11.10,Oneiric Ocelot,oneiric,2011-04-28,2011-10-13,2013-05-09
-12.04 LTS,Precise Pangolin,precise,2011-10-13,2012-04-26,2017-04-26
-12.10,Quantal Quetzal,quantal,2012-04-26,2012-10-18,2014-04-18
+12.04 LTS,Precise Pangolin,precise,2011-10-13,2012-04-26,2017-04-26,2017-04-26,2019-04-26
+12.10,Quantal Quetzal,quantal,2012-04-26,2012-10-18,2014-05-16
 13.04,Raring Ringtail,raring,2012-10-18,2013-04-25,2014-01-27
 13.10,Saucy Salamander,saucy,2013-04-25,2013-10-17,2014-07-17
+14.04 LTS,Trusty Tahr,trusty,2013-10-17,2014-04-17,2019-04-17,2019-04-17,2022-04-17
+14.10,Utopic Unicorn,utopic,2014-04-17,2014-10-23,2015-07-23
+15.04,Vivid Vervet,vivid,2014-10-23,2015-04-23,2016-01-23
+15.10,Wily Werewolf,wily,2015-04-23,2015-10-22,2016-07-22
+16.04 LTS,Xenial Xerus,xenial,2015-10-22,2016-04-21,2021-04-21,2021-04-21,2024-04-21
+16.10,Yakkety Yak,yakkety,2016-04-21,2016-10-13,2017-07-20
+17.04,Zesty Zapus,zesty,2016-10-13,2017-04-13,2018-01-13
+17.10,Artful Aardvark,artful,2017-04-13,2017-10-19,2018-07-19
+18.04 LTS,Bionic Beaver,bionic,2017-10-19,2018-04-26,2023-04-26,2023-04-26,2028-04-26
+18.10,Cosmic Cuttlefish,cosmic,2018-04-26,2018-10-18,2019-07-18
+19.04,Disco Dingo,disco,2018-10-18,2019-04-18,2020-01-18
+19.10,Eoan EANIMAL,eoan,2019-04-18,2019-10-17,2020-07-17
 `
 
 const distInfoData2 = distInfoData + `
-14.04 LTS,Trusty Tahr,trusty,2013-10-17,2014-04-17,2019-04-17
+14.04 LTS,Firewolf,firewolf,2013-10-17,2014-04-17,2019-04-17
 94.04 LTS,Ornery Omega,ornery,2094-10-17,2094-04-17,2099-04-17
 `
