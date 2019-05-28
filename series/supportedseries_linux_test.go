@@ -70,19 +70,6 @@ func (s *supportedSeriesSuite) TestUpdateSeriesVersions(c *gc.C) {
 	checkSeries()
 }
 
-func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
-	d := c.MkDir()
-	filename := filepath.Join(d, "ubuntu.csv")
-	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
-	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, filename)
-
-	expectedSeries := []string{"bionic", "cosmic", "disco", "xenial"}
-	series := series.SupportedJujuSeries()
-	sort.Strings(series)
-	c.Assert(series, gc.DeepEquals, expectedSeries)
-}
-
 func (s *supportedSeriesSuite) TestESMSupportedJujuSeries(c *gc.C) {
 	d := c.MkDir()
 	filename := filepath.Join(d, "ubuntu.csv")
@@ -93,7 +80,7 @@ func (s *supportedSeriesSuite) TestESMSupportedJujuSeries(c *gc.C) {
 	expectedSeries := []string{"bionic", "trusty", "xenial"}
 	series := series.ESMSupportedJujuSeries()
 	sort.Strings(series)
-	c.Assert(series, gc.DeepEquals, expectedSeries)
+	c.Assert(series, jc.SameContents, expectedSeries)
 }
 
 func (s *supportedSeriesSuite) TestOSSeries(c *gc.C) {
