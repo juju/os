@@ -4,6 +4,10 @@
 package series_test
 
 import (
+	"io/ioutil"
+	"sort"
+	"path/filepath"
+
 	"github.com/juju/testing"
 	jc "github.com/juju/testing/checkers"
 	gc "gopkg.in/check.v1"
@@ -175,3 +179,17 @@ func (s *supportedSeriesSuite) TestSupportedLts(c *gc.C) {
 	want := []string{"precise", "trusty", "xenial", "bionic"}
 	c.Assert(got, gc.DeepEquals, want)
 }
+
+func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "ubuntu.csv")
+	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+	s.PatchValue(series.DistroInfo, filename)
+
+	expectedSeries := []string{"bionic", "centos7", "cosmic", "disco", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win7", "win8", "win81", "xenial"}
+	series := series.SupportedJujuSeries()
+	sort.Strings(series)
+	c.Assert(series, jc.SameContents, expectedSeries)
+}
+
