@@ -75,6 +75,7 @@ var seriesVersions = map[string]string{
 	"bionic":           "18.04",
 	"cosmic":           "18.10",
 	"disco":            "19.04",
+	"eoan":             "19.10",
 	"win2008r2":        "win2008r2",
 	"win2012hvr2":      "win2012hvr2",
 	"win2012hv":        "win2012hv",
@@ -183,6 +184,73 @@ var ubuntuSeries = map[string]seriesVersion{
 	},
 	"eoan": seriesVersion{
 		Version:   "19.10",
+		Supported: true,
+	},
+}
+
+var nonUbuntuSeries = map[string]seriesVersion{
+	"win2008r2":        {
+		Version:"win2008r2",
+		Supported: true,
+	},
+	"win2012hvr2":      {
+		Version: "win2012hvr2",
+		Supported: true,
+	},
+	"win2012hv":        {
+		Version: "win2012hv",
+		Supported: true,
+	},
+	"win2012r2":        {
+		Version: "win2012r2",
+		Supported: true,
+	},
+	"win2012":          {
+		Version: "win2012",
+		Supported: true,
+	},
+	"win2016":         {
+		Version:  "win2016",
+		Supported: true,
+	},
+	"win2016hv":       {
+		Version:  "win2016hv",
+		Supported: true,
+	},
+	"win2016nano":      {
+		Version: "win2016nano",
+		Supported: true,
+	},
+	"win7":           {
+		Version:   "win7",
+		Supported: true,
+	},
+	"win8":          {
+		Version:    "win8",
+		Supported: true,
+	},
+	"win81":           {
+		Version:  "win81",
+		Supported: true,
+	},
+	"win10":         {
+		Version:    "win10",
+		Supported: true,
+	},
+	"centos7":        {
+		Version:   "centos7",
+		Supported: true,
+	},
+	"opensuseleap":    {
+		Version:  "opensuse42",
+		Supported: true,
+	},
+	genericLinuxSeries: {
+		Version: genericLinuxVersion,
+		Supported: true,
+	},
+	"kubernetes":  {
+		Version:"kubernetes",
 		Supported: true,
 	},
 }
@@ -467,13 +535,24 @@ func SupportedSeries() []string {
 	return series
 }
 
-// SupportedJujuSeries returns a slice of just juju supported ubuntu series.
+func allSeriesVersions() map[string]seriesVersion{
+	all := map[string]seriesVersion{}
+	for k, v := range ubuntuSeries{
+		all[k] = v
+	}
+	for k, v := range nonUbuntuSeries{
+		all[k] = v
+	}
+	return all
+}
+
+// SupportedJujuSeries returns a slice of juju supported series.
 func SupportedJujuSeries() []string {
 	seriesVersionsMutex.Lock()
 	defer seriesVersionsMutex.Unlock()
 	updateSeriesVersionsOnce()
 	var series []string
-	for s, version := range ubuntuSeries {
+	for s, version := range allSeriesVersions() {
 		if !version.Supported {
 			continue
 		}
