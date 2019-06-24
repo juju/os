@@ -124,6 +124,8 @@ type seriesVersion struct {
 	// Extended security maintenance for customers, extends the supported bool
 	// for how Juju classifies the series.
 	ESMSupported bool
+	// WarningInfo used for when parsing the CSV about local distro information
+	WarningInfo []string
 }
 
 var ubuntuSeries = map[string]seriesVersion{
@@ -189,68 +191,68 @@ var ubuntuSeries = map[string]seriesVersion{
 }
 
 var nonUbuntuSeries = map[string]seriesVersion{
-	"win2008r2":        {
-		Version:"win2008r2",
+	"win2008r2": {
+		Version:   "win2008r2",
 		Supported: true,
 	},
-	"win2012hvr2":      {
-		Version: "win2012hvr2",
+	"win2012hvr2": {
+		Version:   "win2012hvr2",
 		Supported: true,
 	},
-	"win2012hv":        {
-		Version: "win2012hv",
+	"win2012hv": {
+		Version:   "win2012hv",
 		Supported: true,
 	},
-	"win2012r2":        {
-		Version: "win2012r2",
+	"win2012r2": {
+		Version:   "win2012r2",
 		Supported: true,
 	},
-	"win2012":          {
-		Version: "win2012",
+	"win2012": {
+		Version:   "win2012",
 		Supported: true,
 	},
-	"win2016":         {
-		Version:  "win2016",
+	"win2016": {
+		Version:   "win2016",
 		Supported: true,
 	},
-	"win2016hv":       {
-		Version:  "win2016hv",
+	"win2016hv": {
+		Version:   "win2016hv",
 		Supported: true,
 	},
-	"win2016nano":      {
-		Version: "win2016nano",
+	"win2016nano": {
+		Version:   "win2016nano",
 		Supported: true,
 	},
-	"win7":           {
+	"win7": {
 		Version:   "win7",
 		Supported: true,
 	},
-	"win8":          {
-		Version:    "win8",
+	"win8": {
+		Version:   "win8",
 		Supported: true,
 	},
-	"win81":           {
-		Version:  "win81",
+	"win81": {
+		Version:   "win81",
 		Supported: true,
 	},
-	"win10":         {
-		Version:    "win10",
+	"win10": {
+		Version:   "win10",
 		Supported: true,
 	},
-	"centos7":        {
+	"centos7": {
 		Version:   "centos7",
 		Supported: true,
 	},
-	"opensuseleap":    {
-		Version:  "opensuse42",
+	"opensuseleap": {
+		Version:   "opensuse42",
 		Supported: true,
 	},
 	genericLinuxSeries: {
-		Version: genericLinuxVersion,
+		Version:   genericLinuxVersion,
 		Supported: true,
 	},
-	"kubernetes":  {
-		Version:"kubernetes",
+	"kubernetes": {
+		Version:   "kubernetes",
 		Supported: true,
 	},
 }
@@ -535,12 +537,12 @@ func SupportedSeries() []string {
 	return series
 }
 
-func allSeriesVersions() map[string]seriesVersion{
+func allSeriesVersions() map[string]seriesVersion {
 	all := map[string]seriesVersion{}
-	for k, v := range ubuntuSeries{
+	for k, v := range ubuntuSeries {
 		all[k] = v
 	}
-	for k, v := range nonUbuntuSeries{
+	for k, v := range nonUbuntuSeries {
 		all[k] = v
 	}
 	return all
@@ -577,6 +579,19 @@ func ESMSupportedJujuSeries() []string {
 	return series
 }
 
+// SeriesWarningInfo returns any potential warnings about a particular series
+// when parsing data from the system.
+func SeriesWarningInfo(version string) []string {
+	seriesVersionsMutex.Lock()
+	defer seriesVersionsMutex.Unlock()
+	updateSeriesVersionsOnce()
+
+	if s, ok := ubuntuSeries[version]; ok {
+		return s.WarningInfo
+	}
+	return nil
+}
+
 // OSSupportedSeries returns the series of the specified OS on which we
 // can run Juju workloads.
 func OSSupportedSeries(os os.OSType) []string {
@@ -596,7 +611,7 @@ func OSSupportedSeries(os os.OSType) []string {
 func UpdateSeriesVersions() error {
 	seriesVersionsMutex.Lock()
 	defer seriesVersionsMutex.Unlock()
-	err := updateLocalSeriesVersions()
+	err := updateDistroInfo()
 	if err != nil {
 		return err
 	}
@@ -609,7 +624,7 @@ var updatedseriesVersions bool
 
 func updateSeriesVersionsOnce() {
 	if !updatedseriesVersions {
-		if err := updateLocalSeriesVersions(); err != nil {
+		if err := updateDistroInfo(); err != nil {
 			logger.Warningf("failed to update distro info: %v", err)
 		}
 		updateVersionSeries()

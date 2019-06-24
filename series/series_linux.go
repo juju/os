@@ -82,10 +82,6 @@ func ReleaseVersion() string {
 	return release["VERSION_ID"]
 }
 
-func updateLocalSeriesVersions() error {
-	return updateDistroInfo()
-}
-
 var distroInfo = "/usr/share/distro-info/ubuntu.csv"
 
 // updateDistroInfo updates seriesVersions from /usr/share/distro-info/ubuntu.csv if possible..
@@ -112,13 +108,13 @@ func updateDistroInfo() error {
 	//
 	// TODO(axw) only add in series that are supported? (i.e. before end of life)
 	// Can we really do this? Users might have Extended Security Maintenance.
-
 	now := time.Now()
 	var foundPrecise bool
 	for _, fields := range records {
 		var version, series string
 		var release string
 		var eol, eolESM string
+		var warnings []string
 		for i, field := range fields {
 			if i >= len(fieldNames) {
 				break
@@ -160,12 +156,14 @@ func updateDistroInfo() error {
 			// we should add 5 years to the release date in case of an error
 			// parsing the eol date.
 			eolDate = releaseDate.Add(5 * year)
+			warnings = append(warnings, "EOL date not found so falling back to release date, plus 5 years")
 		}
 
 		eolESMDate, err := time.Parse("2006-01-02", eolESM)
 		if err != nil {
 			// fall back to the eolDate if none is provided in the csv.
 			eolESMDate = eolDate
+			warnings = append(warnings, "EOL ESM date not found so falling back to EOL date")
 		}
 
 		// The numeric version may contain a LTS moniker so strip that out.
@@ -188,6 +186,7 @@ func updateDistroInfo() error {
 			LTS:          ltsRelease,
 			Supported:    now.After(releaseDate) && now.Before(eolDate),
 			ESMSupported: ltsRelease && now.After(releaseDate) && now.Before(eolESMDate),
+			WarningInfo:  warnings,
 		}
 	}
 	return nil
