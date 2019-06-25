@@ -84,8 +84,9 @@ func ReleaseVersion() string {
 
 var distroInfo = "/usr/share/distro-info/ubuntu.csv"
 
-// updateDistroInfo updates seriesVersions from /usr/share/distro-info/ubuntu.csv if possible..
-func updateDistroInfo() error {
+// updateLocalSeriesVersions updates seriesVersions from
+// /usr/share/distro-info/ubuntu.csv if possible..
+func updateLocalSeriesVersions() error {
 	// We need to find the series version eg 12.04 from the series eg precise. Use the information found in
 	// /usr/share/distro-info/ubuntu.csv provided by distro-info-data package.
 	f, err := os.Open(distroInfo)
@@ -156,14 +157,14 @@ func updateDistroInfo() error {
 			// we should add 5 years to the release date in case of an error
 			// parsing the eol date.
 			eolDate = releaseDate.Add(5 * year)
-			warnings = append(warnings, "EOL date not found so falling back to release date, plus 5 years")
+			warnings = append(warnings, "EOL date not found, falling back to release date, plus 5 years")
 		}
 
 		eolESMDate, err := time.Parse("2006-01-02", eolESM)
 		if err != nil {
 			// fall back to the eolDate if none is provided in the csv.
 			eolESMDate = eolDate
-			warnings = append(warnings, "EOL ESM date not found so falling back to EOL date")
+			warnings = append(warnings, "EOL ESM date not found, falling back to EOL date")
 		}
 
 		// The numeric version may contain a LTS moniker so strip that out.

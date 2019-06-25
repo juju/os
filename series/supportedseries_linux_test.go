@@ -92,8 +92,8 @@ func (s *supportedSeriesSuite) TestWarningInfoForInvalidParsing(c *gc.C) {
 
 	info := series.SeriesWarningInfo("firewolf")
 	c.Assert(info, jc.SameContents, []string{
-		"EOL date not found so falling back to release date, plus 5 years",
-		"EOL ESM date not found so falling back to EOL date",
+		"EOL date not found, falling back to release date, plus 5 years",
+		"EOL ESM date not found, falling back to EOL date",
 	})
 }
 

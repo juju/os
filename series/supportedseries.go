@@ -124,7 +124,8 @@ type seriesVersion struct {
 	// Extended security maintenance for customers, extends the supported bool
 	// for how Juju classifies the series.
 	ESMSupported bool
-	// WarningInfo used for when parsing the CSV about local distro information
+	// WarningInfo shows any potential issues when parsing the series version
+	// information.
 	WarningInfo []string
 }
 
@@ -611,7 +612,7 @@ func OSSupportedSeries(os os.OSType) []string {
 func UpdateSeriesVersions() error {
 	seriesVersionsMutex.Lock()
 	defer seriesVersionsMutex.Unlock()
-	err := updateDistroInfo()
+	err := updateLocalSeriesVersions()
 	if err != nil {
 		return err
 	}
@@ -624,7 +625,7 @@ var updatedseriesVersions bool
 
 func updateSeriesVersionsOnce() {
 	if !updatedseriesVersions {
-		if err := updateDistroInfo(); err != nil {
+		if err := updateLocalSeriesVersions(); err != nil {
 			logger.Warningf("failed to update distro info: %v", err)
 		}
 		updateVersionSeries()
