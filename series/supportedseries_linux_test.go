@@ -83,6 +83,20 @@ func (s *supportedSeriesSuite) TestESMSupportedJujuSeries(c *gc.C) {
 	c.Assert(series, jc.SameContents, expectedSeries)
 }
 
+func (s *supportedSeriesSuite) TestWarningInfoForInvalidParsing(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "ubuntu.csv")
+	err := ioutil.WriteFile(filename, []byte(distInfoData2), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+	s.PatchValue(series.DistroInfo, filename)
+
+	info := series.SeriesWarningInfo("firewolf")
+	c.Assert(info, jc.SameContents, []string{
+		"EOL date not found, falling back to release date, plus 5 years",
+		"EOL ESM date not found, falling back to EOL date",
+	})
+}
+
 func (s *supportedSeriesSuite) TestOSSeries(c *gc.C) {
 	restore := series.HideUbuntuSeries()
 	defer restore()
@@ -133,6 +147,6 @@ const distInfoData = `version,codename,series,created,release,eol,eol-server,eol
 `
 
 const distInfoData2 = distInfoData + `
-14.04 LTS,Firewolf,firewolf,2013-10-17,2014-04-17,2019-04-17
+14.04 LTS,Firewolf,firewolf,2013-10-17,2014-04-17
 94.04 LTS,Ornery Omega,ornery,2094-10-17,2094-04-17,2099-04-17
 `

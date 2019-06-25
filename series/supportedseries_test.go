@@ -5,8 +5,8 @@ package series_test
 
 import (
 	"io/ioutil"
-	"sort"
 	"path/filepath"
+	"sort"
 
 	"github.com/juju/testing"
 	jc "github.com/juju/testing/checkers"
@@ -192,4 +192,3 @@ func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
 	sort.Strings(series)
 	c.Assert(series, jc.SameContents, expectedSeries)
 }
-
