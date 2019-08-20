@@ -187,8 +187,9 @@ func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.DistroInfo, filename)
 
-	expectedSeries := []string{"bionic", "centos7", "cosmic", "disco", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win7", "win8", "win81", "xenial"}
+	expectedSeries := []string{"bionic", "centos7", "disco", "eoan", "genericlinux", "kubernetes", "opensuseleap", "spock", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win7", "win8", "win81", "xenial"}
 	series := series.SupportedJujuSeries()
 	sort.Strings(series)
+	sort.Strings(expectedSeries)
 	c.Assert(series, jc.SameContents, expectedSeries)
 }

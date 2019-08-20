@@ -185,8 +185,8 @@ func updateLocalSeriesVersions() error {
 		ubuntuSeries[series] = seriesVersion{
 			Version:      trimmedVersion,
 			LTS:          ltsRelease,
-			Supported:    now.After(releaseDate) && now.Before(eolDate),
-			ESMSupported: ltsRelease && now.After(releaseDate) && now.Before(eolESMDate),
+			Supported:    now.Before(eolDate),
+			ESMSupported: ltsRelease && now.Before(eolESMDate),
 			WarningInfo:  warnings,
 		}
 	}
