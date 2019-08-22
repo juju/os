@@ -114,10 +114,7 @@ var kubernetesSeries = map[string]string{
 type seriesVersion struct {
 	Version string
 	// LTS provides a lookup for current LTS series.  Like seriesVersions,
-	// the values here are current at the time of writing. On Ubuntu systems this
-	// map is updated by updateDistroInfo, using data from
-	// /usr/share/distro-info/ubuntu.csv to ensure we have the latest values. On
-	// non-Ubuntu systems, these values provide a nice fallback option.
+	// the values here are current at the time of writing.
 	LTS bool
 	// Supported defines if Juju classifies the series as officially supported.
 	Supported bool
@@ -127,6 +124,10 @@ type seriesVersion struct {
 	// WarningInfo shows any potential issues when parsing the series version
 	// information.
 	WarningInfo []string
+	// CreatedByLocalDistroInfo indecates that the series version was created
+	// by the local distro-info information on the system.
+	// This is useful to understand why a version appears yet is not supported.
+	CreatedByLocalDistroInfo bool
 }
 
 var ubuntuSeries = map[string]seriesVersion{
@@ -578,19 +579,6 @@ func ESMSupportedJujuSeries() []string {
 		series = append(series, s)
 	}
 	return series
-}
-
-// SeriesWarningInfo returns any potential warnings about a particular series
-// when parsing data from the system.
-func SeriesWarningInfo(version string) []string {
-	seriesVersionsMutex.Lock()
-	defer seriesVersionsMutex.Unlock()
-	updateSeriesVersionsOnce()
-
-	if s, ok := ubuntuSeries[version]; ok {
-		return s.WarningInfo
-	}
-	return nil
 }
 
 // OSSupportedSeries returns the series of the specified OS on which we

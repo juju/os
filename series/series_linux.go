@@ -106,16 +106,9 @@ func updateLocalSeriesVersions() error {
 	records = records[1:]
 
 	// We ignore all series prior to precise.
-	//
-	// TODO(axw) only add in series that are supported? (i.e. before end of life)
-	// Can we really do this? Users might have Extended Security Maintenance.
-	now := time.Now()
 	var foundPrecise bool
 	for _, fields := range records {
 		var version, series string
-		var release string
-		var eol, eolESM string
-		var warnings []string
 		for i, field := range fields {
 			if i >= len(fieldNames) {
 				break
@@ -125,17 +118,9 @@ func updateLocalSeriesVersions() error {
 				version = field
 			case "series":
 				series = field
-			case "release":
-				release = field
-			case "eol":
-				eol = field
-			case "eol-esm":
-				eolESM = field
 			}
 		}
-		// we ignore eol and eolESM as they're optional, as we can fall back to
-		// some dates if they are missing.
-		if version == "" || series == "" || release == "" {
+		if version == "" || series == "" {
 			// Ignore malformed line.
 			continue
 		}
@@ -146,48 +131,22 @@ func updateLocalSeriesVersions() error {
 			foundPrecise = true
 		}
 
-		releaseDate, err := time.Parse("2006-01-02", release)
-		if err != nil {
-			// Ignore lines with invalid release dates.
-			continue
-		}
-
-		eolDate, err := time.Parse("2006-01-02", eol)
-		if err != nil {
-			// we should add 5 years to the release date in case of an error
-			// parsing the eol date.
-			eolDate = releaseDate.Add(5 * year)
-			warnings = append(warnings, "EOL date not found, falling back to release date, plus 5 years")
-		}
-
-		eolESMDate, err := time.Parse("2006-01-02", eolESM)
-		if err != nil {
-			// fall back to the eolDate if none is provided in the csv.
-			eolESMDate = eolDate
-			warnings = append(warnings, "EOL ESM date not found, falling back to EOL date")
-		}
-
 		// The numeric version may contain a LTS moniker so strip that out.
 		trimmedVersion := strings.TrimSuffix(version, " LTS")
 		seriesVersions[series] = trimmedVersion
 
-		var ltsRelease bool
-		if strings.HasSuffix(version, " LTS") && !now.Before(releaseDate) {
-			// We only record that a series is LTS if its release
-			// date has passed. This allows the series to be tested
-			// pre-release, without affecting default series.
-			ltsRelease = true
+		// If the series already exists inside of ubuntuSeries then don't
+		// overwrite that existing one.
+		if _, ok := ubuntuSeries[series]; ok {
+			continue
 		}
 
 		// work out if the series is supported or if the extended security
 		// maintenance is supported from the following release cycle
 		// documentation https://www.ubuntu.com/about/release-cycle
 		ubuntuSeries[series] = seriesVersion{
-			Version:      trimmedVersion,
-			LTS:          ltsRelease,
-			Supported:    now.Before(eolDate),
-			ESMSupported: ltsRelease && now.Before(eolESMDate),
-			WarningInfo:  warnings,
+			Version:                  trimmedVersion,
+			CreatedByLocalDistroInfo: true,
 		}
 	}
 	return nil
