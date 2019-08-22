@@ -62,6 +62,11 @@ var getOSFromSeriesTests = []struct {
 },
 }
 
+func (s *supportedSeriesSuite) TestDefaultSupportedLTS(c *gc.C) {
+	name := series.DefaultSupportedLTS()
+	c.Assert(name, gc.Equals, "bionic")
+}
+
 func (s *supportedSeriesSuite) TestGetOSFromSeries(c *gc.C) {
 	for _, t := range getOSFromSeriesTests {
 		got, err := series.GetOSFromSeries(t.series)
@@ -180,7 +185,21 @@ func (s *supportedSeriesSuite) TestSupportedLts(c *gc.C) {
 	c.Assert(got, gc.DeepEquals, want)
 }
 
-func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
+func (s *supportedSeriesSuite) TestSupportedJujuControllerSeries(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "ubuntu.csv")
+	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+	s.PatchValue(series.DistroInfo, filename)
+
+	expectedSeries := []string{"bionic", "cosmic", "disco", "eoan", "xenial"}
+	series := series.SupportedJujuControllerSeries()
+	sort.Strings(series)
+	sort.Strings(expectedSeries)
+	c.Assert(series, jc.SameContents, expectedSeries)
+}
+
+func (s *supportedSeriesSuite) TestSupportedJujuWorkloadSeries(c *gc.C) {
 	d := c.MkDir()
 	filename := filepath.Join(d, "ubuntu.csv")
 	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
@@ -188,7 +207,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
 	s.PatchValue(series.DistroInfo, filename)
 
 	expectedSeries := []string{"bionic", "centos7", "cosmic", "disco", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win7", "win8", "win81", "xenial"}
-	series := series.SupportedJujuSeries()
+	series := series.SupportedJujuWorkloadSeries()
 	sort.Strings(series)
 	sort.Strings(expectedSeries)
 	c.Assert(series, jc.SameContents, expectedSeries)

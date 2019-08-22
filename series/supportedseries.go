@@ -108,12 +108,20 @@ var kubernetesSeries = map[string]string{
 	"kubernetes": "kubernetes",
 }
 
+// DefaultSupportedLTS returns the latest LTS that Juju supports and is
+// compatible with.
+// For example, Juju 2.3.x series cannot be run on "bionic"
+// as mongo version that it depends on (3.2 and less) is not packaged for bionic.
+func DefaultSupportedLTS() string {
+	return "bionic"
+}
+
 // seriesVersion represents a ubuntu series that includes the version, if the
 // series is an LTS and the supported defines if Juju supports the series
 // version.
 type seriesVersion struct {
 	Version string
-	// LTS provides a lookup for current LTS series.  Like seriesVersions,
+	// LTS provides a lookup for a LTS series.  Like seriesVersions,
 	// the values here are current at the time of writing.
 	LTS bool
 	// Supported defines if Juju classifies the series as officially supported.
@@ -550,8 +558,25 @@ func allSeriesVersions() map[string]seriesVersion {
 	return all
 }
 
-// SupportedJujuSeries returns a slice of juju supported series.
-func SupportedJujuSeries() []string {
+// SupportedJujuControllerSeries returns a slice of juju supported series that
+// target a controller (bootstrapping).
+func SupportedJujuControllerSeries() []string {
+	seriesVersionsMutex.Lock()
+	defer seriesVersionsMutex.Unlock()
+	updateSeriesVersionsOnce()
+	var series []string
+	for s, version := range ubuntuSeries {
+		if !version.Supported {
+			continue
+		}
+		series = append(series, s)
+	}
+	return series
+}
+
+// SupportedJujuWorkloadSeries returns a slice of juju supported series that
+// target a workload (deploying a charm).
+func SupportedJujuWorkloadSeries() []string {
 	seriesVersionsMutex.Lock()
 	defer seriesVersionsMutex.Unlock()
 	updateSeriesVersionsOnce()
