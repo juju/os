@@ -59,6 +59,28 @@ func (s *linuxVersionSuite) TestOSVersion(c *gc.C) {
 	version, err := series.ReadSeries()
 	c.Assert(err, jc.ErrorIsNil)
 	c.Assert(version, gc.Equals, "spock")
+
+	// Ensure that we identify that the poly-filled os releases from distro-info
+	// don't change supported values.
+	series := series.UbuntuSupportedSeries()
+
+	// Precise isn't poly-filled and isn't supported.
+	precise, ok := series["precise"]
+	c.Assert(ok, jc.IsTrue)
+	c.Assert(precise.CreatedByLocalDistroInfo, jc.IsFalse)
+	c.Assert(precise.Supported, jc.IsFalse)
+
+	// Bionic isn't poly-filled and is supported.
+	bionic, ok := series["bionic"]
+	c.Assert(ok, jc.IsTrue)
+	c.Assert(bionic.CreatedByLocalDistroInfo, jc.IsFalse)
+	c.Assert(bionic.Supported, jc.IsTrue)
+
+	// Spock is poly-filled and isn't supported.
+	spock, ok := series["spock"]
+	c.Assert(ok, jc.IsTrue)
+	c.Assert(spock.CreatedByLocalDistroInfo, jc.IsTrue)
+	c.Assert(spock.Supported, jc.IsFalse)
 }
 
 func (s *linuxVersionSuite) TestUseFastLXC(c *gc.C) {
