@@ -108,12 +108,18 @@ var kubernetesSeries = map[string]string{
 	"kubernetes": "kubernetes",
 }
 
+// DefaultSupportedLTS returns the latest LTS that Juju supports and is
+// compatible with.
+func DefaultSupportedLTS() string {
+	return "bionic"
+}
+
 // seriesVersion represents a ubuntu series that includes the version, if the
 // series is an LTS and the supported defines if Juju supports the series
 // version.
 type seriesVersion struct {
 	Version string
-	// LTS provides a lookup for current LTS series.  Like seriesVersions,
+	// LTS provides a lookup for a LTS series.  Like seriesVersions,
 	// the values here are current at the time of writing.
 	LTS bool
 	// Supported defines if Juju classifies the series as officially supported.
@@ -179,8 +185,7 @@ var ubuntuSeries = map[string]seriesVersion{
 		ESMSupported: true,
 	},
 	"cosmic": seriesVersion{
-		Version:   "18.10",
-		Supported: true,
+		Version: "18.10",
 	},
 	"disco": seriesVersion{
 		Version:   "19.04",
@@ -550,8 +555,25 @@ func allSeriesVersions() map[string]seriesVersion {
 	return all
 }
 
-// SupportedJujuSeries returns a slice of juju supported series.
-func SupportedJujuSeries() []string {
+// SupportedJujuControllerSeries returns a slice of juju supported series that
+// target a controller (bootstrapping).
+func SupportedJujuControllerSeries() []string {
+	seriesVersionsMutex.Lock()
+	defer seriesVersionsMutex.Unlock()
+	updateSeriesVersionsOnce()
+	var series []string
+	for s, version := range ubuntuSeries {
+		if !version.Supported {
+			continue
+		}
+		series = append(series, s)
+	}
+	return series
+}
+
+// SupportedJujuWorkloadSeries returns a slice of juju supported series that
+// target a workload (deploying a charm).
+func SupportedJujuWorkloadSeries() []string {
 	seriesVersionsMutex.Lock()
 	defer seriesVersionsMutex.Unlock()
 	updateSeriesVersionsOnce()
@@ -563,6 +585,12 @@ func SupportedJujuSeries() []string {
 		series = append(series, s)
 	}
 	return series
+}
+
+// SupportedJujuSeries returns a slice of juju supported series that also
+// target a workload.
+func SupportedJujuSeries() []string {
+	return SupportedJujuWorkloadSeries()
 }
 
 // ESMSupportedJujuSeries returns a slice of just juju extended security
