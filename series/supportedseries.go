@@ -587,6 +587,12 @@ func SupportedJujuWorkloadSeries() []string {
 	return series
 }
 
+// SupportedJujuSeries returns a slice of juju supported series that also
+// target a workload.
+func SupportedJujuSeries() []string {
+	return SupportedJujuWorkloadSeries()
+}
+
 // ESMSupportedJujuSeries returns a slice of just juju extended security
 // maintenance supported ubuntu series.
 func ESMSupportedJujuSeries() []string {

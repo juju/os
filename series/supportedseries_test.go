@@ -212,3 +212,17 @@ func (s *supportedSeriesSuite) TestSupportedJujuWorkloadSeries(c *gc.C) {
 	sort.Strings(expectedSeries)
 	c.Assert(series, jc.SameContents, expectedSeries)
 }
+
+func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "ubuntu.csv")
+	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+	s.PatchValue(series.DistroInfo, filename)
+
+	expectedSeries := []string{"bionic", "centos7", "disco", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win7", "win8", "win81", "xenial"}
+	series := series.SupportedJujuSeries()
+	sort.Strings(series)
+	sort.Strings(expectedSeries)
+	c.Assert(series, jc.SameContents, expectedSeries)
+}
