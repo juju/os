@@ -110,8 +110,6 @@ var kubernetesSeries = map[string]string{
 
 // DefaultSupportedLTS returns the latest LTS that Juju supports and is
 // compatible with.
-// For example, Juju 2.3.x series cannot be run on "bionic"
-// as mongo version that it depends on (3.2 and less) is not packaged for bionic.
 func DefaultSupportedLTS() string {
 	return "bionic"
 }
@@ -187,8 +185,7 @@ var ubuntuSeries = map[string]seriesVersion{
 		ESMSupported: true,
 	},
 	"cosmic": seriesVersion{
-		Version:   "18.10",
-		Supported: true,
+		Version: "18.10",
 	},
 	"disco": seriesVersion{
 		Version:   "19.04",
