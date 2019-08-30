@@ -137,6 +137,33 @@ func (s *supportedSeriesSuite) TestSeriesVersionEmpty(c *gc.C) {
 	c.Assert(err, gc.ErrorMatches, `.*unknown version for series: "".*`)
 }
 
+func (s *supportedSeriesSuite) TestUbuntuSeriesVersionEmpty(c *gc.C) {
+	_, err := series.UbuntuSeriesVersion("")
+	c.Assert(err, gc.ErrorMatches, `.*unknown version for series: "".*`)
+}
+
+func (s *supportedSeriesSuite) TestUbuntuSeriesVersion(c *gc.C) {
+	isUbuntuTests := []struct {
+		series   string
+		expected string
+	}{
+		{"precise", "12.04"},
+		{"raring", "13.04"},
+		{"bionic", "18.04"},
+		{"eoan", "19.10"},
+	}
+	for _, v := range isUbuntuTests {
+		ver, err := series.UbuntuSeriesVersion(v.series)
+		c.Assert(err, gc.IsNil)
+		c.Assert(ver, gc.Equals, v.expected)
+	}
+}
+
+func (s *supportedSeriesSuite) TestUbuntuInvalidSeriesVersion(c *gc.C) {
+	_, err := series.UbuntuSeriesVersion("firewolf")
+	c.Assert(err, gc.ErrorMatches, `.*unknown version for series: "firewolf".*`)
+}
+
 func (s *supportedSeriesSuite) TestIsWindowsNano(c *gc.C) {
 	var isWindowsNanoTests = []struct {
 		series   string
