@@ -5,10 +5,9 @@
 package series_test
 
 import (
+	"github.com/juju/os/series"
 	jc "github.com/juju/testing/checkers"
 	gc "gopkg.in/check.v1"
-
-	"github.com/juju/os/series"
 )
 
 type supportedSeriesWindowsSuite struct {
@@ -27,61 +26,49 @@ func (s *supportedSeriesWindowsSuite) TestSeriesVersion(c *gc.C) {
 	c.Assert(vers, gc.Equals, "win8")
 }
 
-func (s *supportedSeriesWindowsSuite) TestSupportedSeries(c *gc.C) {
-	expectedSeries := []string{
-		"genericlinux",
-		"centos7",
-		"opensuseleap",
-
-		"precise",
-		"quantal",
-		"raring",
-		"saucy",
-		"trusty",
-		"utopic",
-		"vivid",
-		"wily",
-		"xenial",
-
-		"win10",
-		"win2008r2",
-		"win2012",
-		"win2012hv",
-		"win2012hvr2",
-		"win2012r2",
-		"win2016",
-		"win2016nano",
-		"win7",
-		"win8",
-		"win81",
+func (s *supportedSeriesSuite) TestIsWindowsNano(c *gc.C) {
+	var isWindowsNanoTests = []struct {
+		series   string
+		expected bool
+	}{
+		{"win2016nano", true},
+		{"win2016", false},
+		{"win2012r2", false},
+		{"trusty", false},
 	}
-	series := series.SupportedSeries()
-	c.Assert(series, jc.SameContents, expectedSeries)
+
+	for _, t := range isWindowsNanoTests {
+		c.Assert(series.IsWindowsNano(t.series), gc.Equals, t.expected)
+	}
 }
 
 func (s supportedSeriesWindowsSuite) TestWindowsVersions(c *gc.C) {
-	sir := series.WindowsVersions()
-	lsir := len(sir)
-	wlen := len(WindowsVersionMap)
-	nlen := len(WindowsNanoMap)
+	windowsVersions := series.WindowsVersions()
+	overwrittenValuesLen := len(series.OverwrittenWindowsVersions())
+	wlen := len(series.WindowsVersionMap)
+	nlen := len(series.WindowsNanoMap)
 	verify := 0
 
-	for i, ival := range sir {
-		for j, jval := range WindowsVersionMap {
+	// This return len(series.WindowsVersionMap) + n,
+	// n equals to the number of values we have overwritten
+	// because we overwrite a value of the map in series.WindowsVersions
+	for i, ival := range windowsVersions {
+		for j, jval := range series.WindowsVersionMap {
 			if i == j && ival == jval {
 				verify++
 			}
 		}
 	}
-	c.Assert(verify, c.Equals, wlen)
-	verify = 0
+	c.Assert(verify+overwrittenValuesLen, gc.Equals, wlen)
 
-	for i, ival := range sir {
-		for j, jval := range WindowsNanoMap {
+	verify = 0
+	// This should return len(WindowsNanoMap)
+	for i, ival := range windowsVersions {
+		for j, jval := range series.WindowsNanoMap {
 			if i == j && ival == jval {
 				verify++
 			}
 		}
 	}
-	c.Assert(verify, c.Equals, nlen)
+	c.Assert(verify, gc.Equals, nlen)
 }
