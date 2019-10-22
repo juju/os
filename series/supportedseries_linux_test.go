@@ -98,6 +98,80 @@ func (s *supportedSeriesSuite) TestOSSeries(c *gc.C) {
 	c.Assert(osType, gc.Equals, os.Ubuntu)
 }
 
+func (s *supportedSeriesSuite) TestSupportedJujuControllerSeries(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "ubuntu.csv")
+	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+	s.PatchValue(series.DistroInfo, filename)
+
+	expectedSeries := []string{"bionic", "disco", "eoan", "xenial"}
+	series := series.SupportedJujuControllerSeries()
+	sort.Strings(series)
+	sort.Strings(expectedSeries)
+	c.Assert(series, jc.SameContents, expectedSeries)
+}
+
+func (s *supportedSeriesSuite) TestSupportedJujuWorkloadSeries(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "ubuntu.csv")
+	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+	s.PatchValue(series.DistroInfo, filename)
+
+	expectedSeries := []string{"bionic", "centos7", "disco", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
+	series := series.SupportedJujuWorkloadSeries()
+	sort.Strings(series)
+	sort.Strings(expectedSeries)
+	c.Assert(series, jc.SameContents, expectedSeries)
+}
+
+func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "ubuntu.csv")
+	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+	s.PatchValue(series.DistroInfo, filename)
+
+	expectedSeries := []string{"bionic", "centos7", "disco", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
+	series := series.SupportedJujuSeries()
+	sort.Strings(series)
+	sort.Strings(expectedSeries)
+	c.Assert(series, jc.SameContents, expectedSeries)
+}
+
+func (s *supportedSeriesSuite) TestLatestLts(c *gc.C) {
+	table := []struct {
+		latest, want string
+	}{
+		{"testseries", "testseries"},
+		{"", "bionic"},
+	}
+	for _, test := range table {
+		series.SetLatestLtsForTesting(test.latest)
+		got := series.LatestLts()
+		c.Assert(got, gc.Equals, test.want)
+	}
+}
+
+func (s *supportedSeriesSuite) TestSetLatestLtsForTesting(c *gc.C) {
+	table := []struct {
+		value, want string
+	}{
+		{"1", "bionic"}, {"2", "1"}, {"3", "2"}, {"4", "3"},
+	}
+	for _, test := range table {
+		got := series.SetLatestLtsForTesting(test.value)
+		c.Assert(got, gc.Equals, test.want)
+	}
+}
+
+func (s *supportedSeriesSuite) TestSupportedLts(c *gc.C) {
+	got := series.SupportedLts()
+	want := []string{"trusty", "xenial", "bionic"}
+	c.Assert(got, gc.DeepEquals, want)
+}
+
 const distInfoData = `version,codename,series,created,release,eol,eol-server,eol-esm
 4.10,Warty Warthog,warty,2004-03-05,2004-10-20,2006-04-30
 5.04,Hoary Hedgehog,hoary,2004-10-20,2005-04-08,2006-10-31

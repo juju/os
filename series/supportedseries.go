@@ -84,6 +84,7 @@ var seriesVersions = map[string]string{
 	"win2016":          "win2016",
 	"win2016hv":        "win2016hv",
 	"win2016nano":      "win2016nano",
+	"win2019":          "win2019",
 	"win7":             "win7",
 	"win8":             "win8",
 	"win81":            "win81",
@@ -230,6 +231,10 @@ var nonUbuntuSeries = map[string]seriesVersion{
 		Version:   "win2016nano",
 		Supported: true,
 	},
+	"win2019": {
+		Version:   "win2019",
+		Supported: true,
+	},
 	"win7": {
 		Version:   "win7",
 		Supported: true,
@@ -277,6 +282,7 @@ var windowsVersionMatchOrder = []string{
 	"Windows Server 2012",
 	"Hyper-V Server 2016",
 	"Windows Server 2016",
+	"Windows Server 2019",
 	"Windows Storage Server 2012 R2",
 	"Windows Storage Server 2012",
 	"Windows Storage Server 2016",
@@ -296,9 +302,11 @@ var windowsVersions = map[string]string{
 	"Windows Server 2012":            "win2012",
 	"Hyper-V Server 2016":            "win2016hv",
 	"Windows Server 2016":            "win2016",
+	"Windows Server 2019":            "win2019",
 	"Windows Storage Server 2012 R2": "win2012r2",
 	"Windows Storage Server 2012":    "win2012",
 	"Windows Storage Server 2016":    "win2016",
+	"Windows Storage Server 2019":    "win2019",
 	"Windows 7":                      "win7",
 	"Windows 8.1":                    "win81",
 	"Windows 8":                      "win8",
@@ -316,17 +324,22 @@ var windowsNanoVersions = map[string]string{
 }
 
 // WindowsVersions returns all windows versions as a map
-func WindowsVersions() map[string]string {
+// If we have nan and windows version in common, nano takes precedence
+func WindowsVersions() (map[string]string, []string) {
 	save := make(map[string]string)
+	var overwrittenValues []string
 	for i, val := range windowsVersions {
 		save[i] = val
 	}
 
 	for i, val := range windowsNanoVersions {
+		if overwritten, ok := save[i]; ok {
+			overwrittenValues = append(overwrittenValues, overwritten)
+		}
 		save[i] = val
 	}
 
-	return save
+	return save, overwrittenValues
 }
 
 // IsWindowsNano tells us whether the provided series is a

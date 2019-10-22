@@ -91,8 +91,8 @@ func (*kernelVersionSuite) TestMacOSXSeries(c *gc.C) {
 		{version: 15, series: "elcapitan"},
 		{version: 16, series: "sierra"},
 		{version: 18, series: "mojave"},
-		{version: 4, series: "unknown", err: `unknown series ""`},
-		{version: 0, series: "unknown", err: `unknown series ""`},
+		{version: 4, series: "unknown", err: `unknown series version 4`},
+		{version: 0, series: "unknown", err: `unknown series version 0`},
 	}
 	for _, test := range tests {
 		series, err := series.MacOSXSeriesFromMajorVersion(test.version)
