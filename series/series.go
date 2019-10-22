@@ -93,6 +93,7 @@ func macOSXSeriesFromKernelVersion(getKernelVersion func() (string, error)) (str
 // macOSXSeries maps from the Darwin Kernel Major Version to the Mac OSX
 // series.
 var macOSXSeries = map[int]string{
+	19: "catalina",
 	18: "mojave",
 	17: "highsierra",
 	16: "sierra",
@@ -112,7 +113,7 @@ var macOSXSeries = map[int]string{
 func macOSXSeriesFromMajorVersion(majorVersion int) (string, error) {
 	series, ok := macOSXSeries[majorVersion]
 	if !ok {
-		return "unknown", errors.Errorf("unknown series %q", series)
+		return "unknown", errors.Errorf("unknown series version %d", majorVersion)
 	}
 	return series, nil
 }
