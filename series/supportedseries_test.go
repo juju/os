@@ -4,10 +4,6 @@
 package series_test
 
 import (
-	"io/ioutil"
-	"path/filepath"
-	"sort"
-
 	"github.com/juju/testing"
 	jc "github.com/juju/testing/checkers"
 	gc "gopkg.in/check.v1"
@@ -162,94 +158,4 @@ func (s *supportedSeriesSuite) TestUbuntuSeriesVersion(c *gc.C) {
 func (s *supportedSeriesSuite) TestUbuntuInvalidSeriesVersion(c *gc.C) {
 	_, err := series.UbuntuSeriesVersion("firewolf")
 	c.Assert(err, gc.ErrorMatches, `.*unknown version for series: "firewolf".*`)
-}
-
-func (s *supportedSeriesSuite) TestIsWindowsNano(c *gc.C) {
-	var isWindowsNanoTests = []struct {
-		series   string
-		expected bool
-	}{
-		{"win2016nano", true},
-		{"win2016", false},
-		{"win2012r2", false},
-		{"trusty", false},
-	}
-
-	for _, t := range isWindowsNanoTests {
-		c.Assert(series.IsWindowsNano(t.series), gc.Equals, t.expected)
-	}
-}
-
-func (s *supportedSeriesSuite) TestLatestLts(c *gc.C) {
-	table := []struct {
-		latest, want string
-	}{
-		{"testseries", "testseries"},
-		{"", "bionic"},
-	}
-	for _, test := range table {
-		series.SetLatestLtsForTesting(test.latest)
-		got := series.LatestLts()
-		c.Assert(got, gc.Equals, test.want)
-	}
-}
-
-func (s *supportedSeriesSuite) TestSetLatestLtsForTesting(c *gc.C) {
-	table := []struct {
-		value, want string
-	}{
-		{"1", "bionic"}, {"2", "1"}, {"3", "2"}, {"4", "3"},
-	}
-	for _, test := range table {
-		got := series.SetLatestLtsForTesting(test.value)
-		c.Assert(got, gc.Equals, test.want)
-	}
-}
-
-func (s *supportedSeriesSuite) TestSupportedLts(c *gc.C) {
-	got := series.SupportedLts()
-	want := []string{"trusty", "xenial", "bionic"}
-	c.Assert(got, gc.DeepEquals, want)
-}
-
-func (s *supportedSeriesSuite) TestSupportedJujuControllerSeries(c *gc.C) {
-	d := c.MkDir()
-	filename := filepath.Join(d, "ubuntu.csv")
-	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
-	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, filename)
-
-	expectedSeries := []string{"bionic", "disco", "eoan", "xenial"}
-	series := series.SupportedJujuControllerSeries()
-	sort.Strings(series)
-	sort.Strings(expectedSeries)
-	c.Assert(series, jc.SameContents, expectedSeries)
-}
-
-func (s *supportedSeriesSuite) TestSupportedJujuWorkloadSeries(c *gc.C) {
-	d := c.MkDir()
-	filename := filepath.Join(d, "ubuntu.csv")
-	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
-	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, filename)
-
-	expectedSeries := []string{"bionic", "centos7", "disco", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win7", "win8", "win81", "xenial"}
-	series := series.SupportedJujuWorkloadSeries()
-	sort.Strings(series)
-	sort.Strings(expectedSeries)
-	c.Assert(series, jc.SameContents, expectedSeries)
-}
-
-func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
-	d := c.MkDir()
-	filename := filepath.Join(d, "ubuntu.csv")
-	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
-	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, filename)
-
-	expectedSeries := []string{"bionic", "centos7", "disco", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win7", "win8", "win81", "xenial"}
-	series := series.SupportedJujuSeries()
-	sort.Strings(series)
-	sort.Strings(expectedSeries)
-	c.Assert(series, jc.SameContents, expectedSeries)
 }
