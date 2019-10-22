@@ -1,0 +1,34 @@
+name: "Client Tests"
+on: [push, pull_request]
+jobs:
+
+  test-client-ubuntu:
+    name: "Client Tests"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+
+    steps:
+
+      - name: Set up Go 1.12
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.12
+        id: go
+
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          path: src/github.com/juju/os
+
+      - name: "Disable CGO"
+        if: (matrix.os == 'windows-latest')
+        run: |
+          echo "##[set-env name=CGO_ENABLED;]0"
+        shell: bash
+
+      - name: Test client
+        run: |
+          go test -v ./... --check.v
