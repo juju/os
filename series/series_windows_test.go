@@ -18,6 +18,8 @@ import (
 	"github.com/juju/os/series"
 )
 
+const randomPasswordBytes = 18
+
 type windowsSeriesSuite struct {
 	testing.CleanupSuite
 }
@@ -88,7 +90,7 @@ func (s *windowsSeriesSuite) SetUpTest(c *gc.C) {
 }
 
 func (s *windowsSeriesSuite) createRegKey(c *gc.C, key *string) {
-	salt, err := utils.RandomPassword()
+	salt, err := RandomPassword()
 	c.Assert(err, jc.ErrorIsNil)
 	regKey := fmt.Sprintf(`SOFTWARE\JUJU\%s`, salt)
 	s.PatchValue(key, regKey)

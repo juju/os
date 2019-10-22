@@ -1,0 +1,50 @@
+name: "Client Tests"
+on: [push, pull_request]
+jobs:
+
+  test-client-ubuntu:
+    name: "Client Tests"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macOS-latest]
+    env:
+      GO111MODULE: off
+
+    steps:
+
+      - name: Set up Go 1.12
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.12
+        id: go
+
+      - name: Set GOPATH
+        # temporary fix
+        # see https://github.com/actions/setup-go/issues/14
+        run: |
+          echo "##[set-env name=GOPATH;]$(dirname $GITHUB_WORKSPACE)"
+          echo "##[add-path]$(dirname $GITHUB_WORKSPACE)/bin"
+        shell: bash
+
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          path: src/github.com/juju/os
+
+      - name: "Disable CGO"
+        if: (matrix.os == 'windows-latest')
+        run: |
+          echo "##[set-env name=CGO_ENABLED;]0"
+        shell: bash
+
+      - name: Install deps
+        run: |
+          go get github.com/rogpeppe/godeps
+          godeps -u dependencies.tsv
+
+      - name: Test client
+        run: |
+          echo "$GOPATH"
+          go test -v ./... --check.v
