@@ -43,7 +43,8 @@ func (s *supportedSeriesSuite) TestIsWindowsNano(c *gc.C) {
 }
 
 func (s supportedSeriesWindowsSuite) TestWindowsVersions(c *gc.C) {
-	windowsVersions, overwrittenValues := series.WindowsVersions()
+	windowsVersions := series.WindowsVersions()
+	overwrittenValuesLen := len(series.OverwrittenWindowsVersions())
 	wlen := len(series.WindowsVersionMap)
 	nlen := len(series.WindowsNanoMap)
 	verify := 0
@@ -58,7 +59,7 @@ func (s supportedSeriesWindowsSuite) TestWindowsVersions(c *gc.C) {
 			}
 		}
 	}
-	c.Assert(verify+len(overwrittenValues), gc.Equals, wlen)
+	c.Assert(verify+overwrittenValuesLen, gc.Equals, wlen)
 
 	verify = 0
 	// This should return len(WindowsNanoMap)

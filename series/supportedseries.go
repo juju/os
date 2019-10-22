@@ -325,21 +325,26 @@ var windowsNanoVersions = map[string]string{
 
 // WindowsVersions returns all windows versions as a map
 // If we have nan and windows version in common, nano takes precedence
-func WindowsVersions() (map[string]string, []string) {
+func WindowsVersions() map[string]string {
 	save := make(map[string]string)
-	var overwrittenValues []string
 	for i, val := range windowsVersions {
 		save[i] = val
 	}
 
 	for i, val := range windowsNanoVersions {
-		if overwritten, ok := save[i]; ok {
-			overwrittenValues = append(overwrittenValues, overwritten)
-		}
 		save[i] = val
 	}
+	return save
+}
 
-	return save, overwrittenValues
+func OverwrittenWindowsVersions() []string {
+	var overwrittenValues []string
+	for i, _ := range windowsNanoVersions {
+		if overwritten, ok := windowsVersions[i]; ok {
+			overwrittenValues = append(overwrittenValues, overwritten)
+		}
+	}
+	return overwrittenValues
 }
 
 // IsWindowsNano tells us whether the provided series is a
