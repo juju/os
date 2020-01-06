@@ -108,7 +108,7 @@ func updateLocalSeriesVersions() error {
 	// We ignore all series prior to precise.
 	var foundPrecise bool
 	for _, fields := range records {
-		var version, series string
+		var version, series, release, eol string
 		for i, field := range fields {
 			if i >= len(fieldNames) {
 				break
@@ -118,12 +118,28 @@ func updateLocalSeriesVersions() error {
 				version = field
 			case "series":
 				series = field
+			case "release":
+				release = field
+			case "eol":
+				eol = field
 			}
 		}
-		if version == "" || series == "" {
+		if version == "" || series == "" || release == "" || eol == "" {
 			// Ignore malformed line.
 			continue
 		}
+		releaseDate, err := time.Parse("2006-01-02", release)
+		if err != nil {
+			// Ignore malformed line.
+			continue
+		}
+		eolDate, err := time.Parse("2006-01-02", eol)
+		if err != nil {
+			// Ignore malformed line.
+			continue
+		}
+		now := time.Now().UTC()
+		supported := now.After(releaseDate.UTC()) && now.Before(eolDate.UTC())
 		if !foundPrecise {
 			if series != "precise" {
 				continue
@@ -136,8 +152,10 @@ func updateLocalSeriesVersions() error {
 		seriesVersions[series] = trimmedVersion
 
 		// If the series already exists inside of ubuntuSeries then don't
-		// overwrite that existing one.
-		if _, ok := ubuntuSeries[series]; ok {
+		// overwrite that existing one, except to update the supported status.
+		if us, ok := ubuntuSeries[series]; ok {
+			us.Supported = supported
+			ubuntuSeries[series] = us
 			continue
 		}
 
@@ -147,6 +165,7 @@ func updateLocalSeriesVersions() error {
 		ubuntuSeries[series] = seriesVersion{
 			Version:                  trimmedVersion,
 			CreatedByLocalDistroInfo: true,
+			Supported:                supported,
 		}
 	}
 	return nil

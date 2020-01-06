@@ -147,6 +147,7 @@ func (s *supportedSeriesSuite) TestUbuntuSeriesVersion(c *gc.C) {
 		{"raring", "13.04"},
 		{"bionic", "18.04"},
 		{"eoan", "19.10"},
+		{"focal", "20.04"},
 	}
 	for _, v := range isUbuntuTests {
 		ver, err := series.UbuntuSeriesVersion(v.series)

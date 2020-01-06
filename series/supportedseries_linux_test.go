@@ -35,7 +35,7 @@ func (s *supportedSeriesSuite) TestSupportedSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.DistroInfo, filename)
 
-	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
+	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
 	series := series.SupportedSeries()
 	sort.Strings(series)
 	c.Assert(series, gc.DeepEquals, expectedSeries)
@@ -48,7 +48,7 @@ func (s *supportedSeriesSuite) TestUpdateSeriesVersions(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.DistroInfo, filename)
 
-	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
+	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
 	checkSeries := func() {
 		series := series.SupportedSeries()
 		sort.Strings(series)
@@ -64,7 +64,6 @@ func (s *supportedSeriesSuite) TestUpdateSeriesVersions(c *gc.C) {
 	checkSeries()
 
 	expectedSeries = append([]string{"ornery"}, expectedSeries...)
-	expectedSeries = append(expectedSeries, "firewolf")
 	sort.Strings(expectedSeries)
 	series.UpdateSeriesVersions()
 	checkSeries()
@@ -168,7 +167,7 @@ func (s *supportedSeriesSuite) TestSetLatestLtsForTesting(c *gc.C) {
 
 func (s *supportedSeriesSuite) TestSupportedLts(c *gc.C) {
 	got := series.SupportedLts()
-	want := []string{"trusty", "xenial", "bionic"}
+	want := []string{"xenial", "bionic"}
 	c.Assert(got, gc.DeepEquals, want)
 }
 
@@ -203,7 +202,8 @@ const distInfoData = `version,codename,series,created,release,eol,eol-server,eol
 18.04 LTS,Bionic Beaver,bionic,2017-10-19,2018-04-26,2023-04-26,2023-04-26,2028-04-26
 18.10,Cosmic Cuttlefish,cosmic,2018-04-26,2018-10-18,2019-07-18
 19.04,Disco Dingo,disco,2018-10-18,2019-04-18,2020-01-18
-19.10,Eoan EANIMAL,eoan,2019-04-18,2019-10-17,2020-07-17
+19.10,Eoan Ermine,eoan,2019-04-18,2019-10-17,2020-07-17
+20.04 LTS,Focal Fossa,focal,2019-10-17,2020-04-23,2025-04-23,2025-04-23,2030-04-23
 `
 
 const distInfoData2 = distInfoData + `

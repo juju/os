@@ -76,6 +76,7 @@ var seriesVersions = map[string]string{
 	"cosmic":           "18.10",
 	"disco":            "19.04",
 	"eoan":             "19.10",
+	"focal":            "20.04",
 	"win2008r2":        "win2008r2",
 	"win2012hvr2":      "win2012hvr2",
 	"win2012hv":        "win2012hv",
@@ -131,7 +132,7 @@ type seriesVersion struct {
 	// WarningInfo shows any potential issues when parsing the series version
 	// information.
 	WarningInfo []string
-	// CreatedByLocalDistroInfo indecates that the series version was created
+	// CreatedByLocalDistroInfo indicates that the series version was created
 	// by the local distro-info information on the system.
 	// This is useful to understand why a version appears yet is not supported.
 	CreatedByLocalDistroInfo bool
@@ -189,12 +190,17 @@ var ubuntuSeries = map[string]seriesVersion{
 		Version: "18.10",
 	},
 	"disco": seriesVersion{
-		Version:   "19.04",
-		Supported: true,
+		Version: "19.04",
 	},
 	"eoan": seriesVersion{
 		Version:   "19.10",
 		Supported: true,
+	},
+	"focal": seriesVersion{
+		Version: "20.04",
+		LTS:     true,
+		// TODO - hard code to true when focal is released (fallback is to rely on distro-info.csv)
+		Supported: false,
 	},
 }
 
@@ -503,7 +509,7 @@ func SupportedLts() []string {
 
 	versions := []string{}
 	for _, version := range ubuntuSeries {
-		if !version.LTS {
+		if !version.LTS || !version.Supported {
 			continue
 		}
 		versions = append(versions, version.Version)
@@ -532,7 +538,7 @@ func LatestLts() string {
 
 	var latest string
 	for k, version := range ubuntuSeries {
-		if !version.LTS {
+		if !version.LTS || !version.Supported {
 			continue
 		}
 		if version.Version > ubuntuSeries[latest].Version {
