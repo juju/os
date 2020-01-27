@@ -200,7 +200,7 @@ var ubuntuSeries = map[string]seriesVersion{
 		Version: "20.04",
 		LTS:     true,
 		// TODO - hard code to true when focal is released (fallback is to rely on distro-info.csv)
-		Supported: false,
+		Supported: true,
 	},
 }
 
