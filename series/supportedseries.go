@@ -378,6 +378,10 @@ func GetOSFromSeries(series string) (os.OSType, error) {
 	if err == nil {
 		return osType, nil
 	}
+
+	seriesVersionsMutex.Lock()
+	defer seriesVersionsMutex.Unlock()
+
 	updateSeriesVersionsOnce()
 	return getOSFromSeries(series)
 }
@@ -670,6 +674,7 @@ func OSSupportedSeries(os os.OSType) []string {
 func UpdateSeriesVersions() error {
 	seriesVersionsMutex.Lock()
 	defer seriesVersionsMutex.Unlock()
+
 	err := updateLocalSeriesVersions()
 	if err != nil {
 		return err

@@ -4,7 +4,6 @@
 package series
 
 import (
-	"encoding/csv"
 	"fmt"
 	"os"
 	"strings"
@@ -82,91 +81,51 @@ func ReleaseVersion() string {
 	return release["VERSION_ID"]
 }
 
-var distroInfo = "/usr/share/distro-info/ubuntu.csv"
-
 // updateLocalSeriesVersions updates seriesVersions from
 // /usr/share/distro-info/ubuntu.csv if possible..
 func updateLocalSeriesVersions() error {
-	// We need to find the series version eg 12.04 from the series eg precise. Use the information found in
-	// /usr/share/distro-info/ubuntu.csv provided by distro-info-data package.
-	f, err := os.Open(distroInfo)
-	if err != nil {
-		// On non-Ubuntu systems this file won't exist but that's expected.
-		return nil
+	distroInfo := NewDistroInfo(UbuntuDistroInfo)
+	if err := distroInfo.Refresh(); err != nil {
+		return errors.Trace(err)
 	}
-	defer f.Close()
 
-	csvReader := csv.NewReader(f)
-	csvReader.FieldsPerRecord = -1
-	records, err := csvReader.ReadAll()
-	if err != nil {
-		return errors.Annotatef(err, "reading %s", distroInfo)
-	}
-	fieldNames := records[0]
-	records = records[1:]
+	now := time.Now().UTC()
 
-	// We ignore all series prior to precise.
-	var foundPrecise bool
-	for _, fields := range records {
-		var version, series, release, eol string
-		for i, field := range fields {
-			if i >= len(fieldNames) {
-				break
-			}
-			switch fieldNames[i] {
-			case "version":
-				version = field
-			case "series":
-				series = field
-			case "release":
-				release = field
-			case "eol":
-				eol = field
-			}
-		}
-		if version == "" || series == "" || release == "" || eol == "" {
-			// Ignore malformed line.
-			continue
-		}
-		releaseDate, err := time.Parse("2006-01-02", release)
-		if err != nil {
-			// Ignore malformed line.
-			continue
-		}
-		eolDate, err := time.Parse("2006-01-02", eol)
-		if err != nil {
-			// Ignore malformed line.
-			continue
-		}
-		now := time.Now().UTC()
-		supported := now.After(releaseDate.UTC()) && now.Before(eolDate.UTC())
-		if !foundPrecise {
-			if series != "precise" {
-				continue
-			}
-			foundPrecise = true
+	for seriesName, version := range distroInfo.info {
+		var esm bool
+		if existing, ok := ubuntuSeries[seriesName]; ok {
+			esm = existing.ESMSupported
 		}
 
 		// The numeric version may contain a LTS moniker so strip that out.
-		trimmedVersion := strings.TrimSuffix(version, " LTS")
-		seriesVersions[series] = trimmedVersion
+		trimmedVersion := strings.TrimSuffix(version.Version, " LTS")
+		seriesVersions[seriesName] = trimmedVersion
 
 		// If the series already exists inside of ubuntuSeries then don't
 		// overwrite that existing one, except to update the supported status.
-		if us, ok := ubuntuSeries[series]; ok {
+		supported := version.Supported(now)
+
+		if us, ok := ubuntuSeries[seriesName]; ok {
 			us.Supported = supported
-			ubuntuSeries[series] = us
+			ubuntuSeries[seriesName] = us
 			continue
 		}
 
-		// work out if the series is supported or if the extended security
-		// maintenance is supported from the following release cycle
-		// documentation https://www.ubuntu.com/about/release-cycle
-		ubuntuSeries[series] = seriesVersion{
-			Version:                  trimmedVersion,
-			CreatedByLocalDistroInfo: true,
+		ubuntuSeries[seriesName] = seriesVersion{
+			Version:                  version.Version,
 			Supported:                supported,
+			ESMSupported:             esm,
+			LTS:                      version.LTS(),
+			CreatedByLocalDistroInfo: true,
 		}
 	}
+
 	return nil
+}
+
+// defaultFileSystem implements the FileSystem for the DistroInfo.
+type defaultFileSystem struct{}
+
+func (defaultFileSystem) Open(path string) (*os.File, error) {
+	return os.Open(path)
 }
