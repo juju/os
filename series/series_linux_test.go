@@ -52,7 +52,7 @@ func (s *linuxVersionSuite) TestOSVersion(c *gc.C) {
 	distroInfo := filepath.Join(d, "ubuntu.csv")
 	err = ioutil.WriteFile(distroInfo, []byte(distroInfoContents), 0644)
 	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, distroInfo)
+	s.PatchValue(series.UbuntuDistroInfoPath, distroInfo)
 
 	// Ensure the future series can be read even though Juju doesn't
 	// know about it.

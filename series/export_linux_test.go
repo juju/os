@@ -4,9 +4,9 @@
 package series
 
 var (
-	DistroInfo    = &distroInfo
-	ReadSeries    = readSeries
-	OSReleaseFile = &osReleaseFile
+	UbuntuDistroInfoPath = &UbuntuDistroInfo
+	ReadSeries           = readSeries
+	OSReleaseFile        = &osReleaseFile
 )
 
 // HideUbuntuSeries hides the global state of the ubuntu series for tests. The

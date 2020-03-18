@@ -33,7 +33,7 @@ func (s *supportedSeriesSuite) TestSupportedSeries(c *gc.C) {
 	filename := filepath.Join(d, "ubuntu.csv")
 	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
 	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, filename)
+	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
 	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
 	series := series.SupportedSeries()
@@ -46,7 +46,7 @@ func (s *supportedSeriesSuite) TestUpdateSeriesVersions(c *gc.C) {
 	filename := filepath.Join(d, "ubuntu.csv")
 	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
 	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, filename)
+	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
 	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
 	checkSeries := func() {
@@ -74,7 +74,7 @@ func (s *supportedSeriesSuite) TestESMSupportedJujuSeries(c *gc.C) {
 	filename := filepath.Join(d, "ubuntu.csv")
 	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
 	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, filename)
+	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
 	expectedSeries := []string{"bionic", "trusty", "xenial"}
 	series := series.ESMSupportedJujuSeries()
@@ -90,7 +90,7 @@ func (s *supportedSeriesSuite) TestOSSeries(c *gc.C) {
 	filename := filepath.Join(d, "ubuntu.csv")
 	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
 	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, filename)
+	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
 	osType, err := series.GetOSFromSeries("raring")
 	c.Assert(err, jc.ErrorIsNil)
@@ -102,9 +102,9 @@ func (s *supportedSeriesSuite) TestSupportedJujuControllerSeries(c *gc.C) {
 	filename := filepath.Join(d, "ubuntu.csv")
 	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
 	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, filename)
+	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"bionic", "disco", "eoan", "xenial"}
+	expectedSeries := []string{"bionic", "eoan", "xenial"}
 	series := series.SupportedJujuControllerSeries()
 	sort.Strings(series)
 	sort.Strings(expectedSeries)
@@ -116,9 +116,9 @@ func (s *supportedSeriesSuite) TestSupportedJujuWorkloadSeries(c *gc.C) {
 	filename := filepath.Join(d, "ubuntu.csv")
 	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
 	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, filename)
+	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"bionic", "centos7", "disco", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
+	expectedSeries := []string{"bionic", "centos7", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
 	series := series.SupportedJujuWorkloadSeries()
 	sort.Strings(series)
 	sort.Strings(expectedSeries)
@@ -130,9 +130,9 @@ func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
 	filename := filepath.Join(d, "ubuntu.csv")
 	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
 	c.Assert(err, jc.ErrorIsNil)
-	s.PatchValue(series.DistroInfo, filename)
+	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"bionic", "centos7", "disco", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
+	expectedSeries := []string{"bionic", "centos7", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
 	series := series.SupportedJujuSeries()
 	sort.Strings(series)
 	sort.Strings(expectedSeries)
