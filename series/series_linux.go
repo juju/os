@@ -112,10 +112,10 @@ func updateLocalSeriesVersions() error {
 		}
 
 		ubuntuSeries[seriesName] = seriesVersion{
-			Version:                  version.Version,
-			Supported:                supported,
-			ESMSupported:             esm,
-			LTS:                      version.LTS(),
+			Version:      version.Version,
+			Supported:    supported,
+			ESMSupported: esm,
+			LTS:          version.LTS(),
 			CreatedByLocalDistroInfo: true,
 		}
 	}
