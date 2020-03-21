@@ -34,6 +34,20 @@ func (s *DistroInfoSuite) SetUpTest(c *gc.C) {
 	s.fixedTime = time.Date(2020, 03, 16, 0, 0, 0, 0, time.UTC).UTC()
 }
 
+func (s *DistroInfoSuite) TestRefreshWithNoFile(c *gc.C) {
+	ctrl := gomock.NewController(c)
+	defer ctrl.Finish()
+
+	mockFileSystem := NewMockFileSystem(ctrl)
+	mockFileSystem.EXPECT().Open("bad file").Return(nil, os.ErrNotExist)
+
+	info := NewDistroInfo("bad file")
+	info.fileSystem = mockFileSystem
+
+	err := info.Refresh()
+	c.Assert(err, jc.ErrorIsNil)
+}
+
 func (s *DistroInfoSuite) TestRefresh(c *gc.C) {
 	ctrl := gomock.NewController(c)
 	defer ctrl.Finish()

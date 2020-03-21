@@ -71,10 +71,7 @@ func (d *DistroInfo) Refresh() error {
 	f, err := d.fileSystem.Open(d.path)
 	if err != nil {
 		// On non-Ubuntu systems this file won't exist but that's expected.
-		if errors.Cause(err) == os.ErrNotExist {
-			return nil
-		}
-		return errors.Trace(err)
+		return nil
 	}
 	defer func() {
 		_ = f.Close()
