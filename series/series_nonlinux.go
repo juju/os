@@ -24,3 +24,7 @@ type defaultFileSystem struct{}
 func (defaultFileSystem) Open(path string) (*os.File, error) {
 	return nil, os.ErrNotExist
 }
+
+func (defaultFileSystem) Exists(path string) bool {
+	return false
+}

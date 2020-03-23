@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"sort"
 
+	"github.com/juju/testing"
 	jc "github.com/juju/testing/checkers"
 	gc "gopkg.in/check.v1"
 
@@ -210,3 +211,20 @@ const distInfoData2 = distInfoData + `
 14.04 LTS,Firewolf,firewolf,2013-10-17,2014-04-17
 94.04 LTS,Ornery Omega,ornery,2094-10-17,2094-04-17,2099-04-17
 `
+
+type isolationSupportedSeriesSuite struct {
+	testing.IsolationSuite
+}
+
+var _ = gc.Suite(&isolationSupportedSeriesSuite{})
+
+func (s *isolationSupportedSeriesSuite) TestBadFilePath(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "bad-file.csv")
+	s.PatchValue(series.UbuntuDistroInfoPath, filename)
+
+	expectedSeries := []string{"artful", "bionic", "centos7", "cosmic", "disco", "eoan", "focal", "genericlinux", "opensuseleap", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial", "yakkety", "zesty"}
+	series := series.SupportedSeries()
+	sort.Strings(series)
+	c.Assert(series, gc.DeepEquals, expectedSeries)
+}

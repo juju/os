@@ -23,6 +23,7 @@ const dateFormat = "2006-01-02"
 // FileSystem defines a interface for interacting with the host os.
 type FileSystem interface {
 	Open(string) (*os.File, error)
+	Exists(string) bool
 }
 
 // DistroInfoSerie holds the information about each distro.
@@ -68,12 +69,12 @@ func NewDistroInfo(path string) *DistroInfo {
 // Refresh will attempt to update the information it has about each distro and
 // if the distro is supported or not.
 func (d *DistroInfo) Refresh() error {
+	// On non-Ubuntu systems this file won't exist but that's expected.
+	if !d.fileSystem.Exists(d.path) {
+		return nil
+	}
 	f, err := d.fileSystem.Open(d.path)
 	if err != nil {
-		// On non-Ubuntu systems this file won't exist but that's expected.
-		if errors.Cause(err) == os.ErrNotExist {
-			return nil
-		}
 		return errors.Trace(err)
 	}
 	defer func() {
