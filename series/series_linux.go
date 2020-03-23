@@ -129,3 +129,8 @@ type defaultFileSystem struct{}
 func (defaultFileSystem) Open(path string) (*os.File, error) {
 	return os.Open(path)
 }
+
+func (defaultFileSystem) Exists(path string) bool {
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
+}

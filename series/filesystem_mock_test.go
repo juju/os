@@ -33,6 +33,20 @@ func (m *MockFileSystem) EXPECT() *MockFileSystemMockRecorder {
 	return m.recorder
 }
 
+// Exists mocks base method
+func (m *MockFileSystem) Exists(arg0 string) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Exists", arg0)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// Exists indicates an expected call of Exists
+func (mr *MockFileSystemMockRecorder) Exists(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockFileSystem)(nil).Exists), arg0)
+}
+
 // Open mocks base method
 func (m *MockFileSystem) Open(arg0 string) (*os.File, error) {
 	m.ctrl.T.Helper()

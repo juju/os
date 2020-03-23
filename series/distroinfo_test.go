@@ -39,7 +39,7 @@ func (s *DistroInfoSuite) TestRefreshWithNoFile(c *gc.C) {
 	defer ctrl.Finish()
 
 	mockFileSystem := NewMockFileSystem(ctrl)
-	mockFileSystem.EXPECT().Open("bad file").Return(nil, os.ErrNotExist)
+	mockFileSystem.EXPECT().Exists("bad file").Return(false)
 
 	info := NewDistroInfo("bad file")
 	info.fileSystem = mockFileSystem
@@ -56,6 +56,7 @@ func (s *DistroInfoSuite) TestRefresh(c *gc.C) {
 	defer close()
 
 	mockFileSystem := NewMockFileSystem(ctrl)
+	mockFileSystem.EXPECT().Exists(UbuntuDistroInfo).Return(true)
 	mockFileSystem.EXPECT().Open(UbuntuDistroInfo).Return(tmpFile, nil)
 
 	info := NewDistroInfo(UbuntuDistroInfo)
