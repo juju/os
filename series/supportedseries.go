@@ -77,6 +77,7 @@ var seriesVersions = map[string]string{
 	"disco":            "19.04",
 	"eoan":             "19.10",
 	"focal":            "20.04",
+	"groovy":           "20.10",
 	"win2008r2":        "win2008r2",
 	"win2012hvr2":      "win2012hvr2",
 	"win2012hv":        "win2012hv",
@@ -91,6 +92,7 @@ var seriesVersions = map[string]string{
 	"win81":            "win81",
 	"win10":            "win10",
 	"centos7":          "centos7",
+	"centos8":          "centos8",
 	"opensuseleap":     "opensuse42",
 	genericLinuxSeries: genericLinuxVersion,
 }
@@ -100,6 +102,7 @@ var versionSeries = reverseSeriesVersion()
 
 var centosSeries = map[string]string{
 	"centos7": "centos7",
+	"centos8": "centos8",
 }
 
 var opensuseSeries = map[string]string{
@@ -139,67 +142,71 @@ type seriesVersion struct {
 }
 
 var ubuntuSeries = map[string]seriesVersion{
-	"precise": seriesVersion{
+	"precise": {
 		Version: "12.04",
 	},
-	"quantal": seriesVersion{
+	"quantal": {
 		Version: "12.10",
 	},
-	"raring": seriesVersion{
+	"raring": {
 		Version: "13.04",
 	},
-	"saucy": seriesVersion{
+	"saucy": {
 		Version: "13.10",
 	},
-	"trusty": seriesVersion{
+	"trusty": {
 		Version:      "14.04",
 		LTS:          true,
 		ESMSupported: true,
 	},
-	"utopic": seriesVersion{
+	"utopic": {
 		Version: "14.10",
 	},
-	"vivid": seriesVersion{
+	"vivid": {
 		Version: "15.04",
 	},
-	"wily": seriesVersion{
+	"wily": {
 		Version: "15.10",
 	},
-	"xenial": seriesVersion{
+	"xenial": {
 		Version:      "16.04",
 		LTS:          true,
 		Supported:    true,
 		ESMSupported: true,
 	},
-	"yakkety": seriesVersion{
+	"yakkety": {
 		Version: "16.10",
 	},
-	"zesty": seriesVersion{
+	"zesty": {
 		Version: "17.04",
 	},
-	"artful": seriesVersion{
+	"artful": {
 		Version: "17.10",
 	},
-	"bionic": seriesVersion{
+	"bionic": {
 		Version:      "18.04",
 		LTS:          true,
 		Supported:    true,
 		ESMSupported: true,
 	},
-	"cosmic": seriesVersion{
+	"cosmic": {
 		Version: "18.10",
 	},
-	"disco": seriesVersion{
+	"disco": {
 		Version: "19.04",
 	},
-	"eoan": seriesVersion{
+	"eoan": {
 		Version:   "19.10",
 		Supported: true,
 	},
-	"focal": seriesVersion{
+	"focal": {
 		Version: "20.04",
 		LTS:     true,
 		// TODO - hard code to true when focal is released (fallback is to rely on distro-info.csv)
+		Supported: false,
+	},
+	"groovy": {
+		Version:   "20.10",
 		Supported: false,
 	},
 }
@@ -259,6 +266,10 @@ var nonUbuntuSeries = map[string]seriesVersion{
 	},
 	"centos7": {
 		Version:   "centos7",
+		Supported: true,
+	},
+	"centos8": {
+		Version:   "centos8",
 		Supported: true,
 	},
 	"opensuseleap": {

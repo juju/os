@@ -105,7 +105,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuControllerSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"bionic", "eoan", "xenial"}
+	expectedSeries := []string{"bionic", "eoan", "focal", "xenial"}
 	series := series.SupportedJujuControllerSeries()
 	sort.Strings(series)
 	sort.Strings(expectedSeries)
@@ -119,7 +119,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuWorkloadSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"bionic", "centos7", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
+	expectedSeries := []string{"bionic", "centos7", "centos8", "eoan", "focal", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
 	series := series.SupportedJujuWorkloadSeries()
 	sort.Strings(series)
 	sort.Strings(expectedSeries)
@@ -133,7 +133,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"bionic", "centos7", "eoan", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
+	expectedSeries := []string{"bionic", "centos7", "centos8", "eoan", "focal", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
 	series := series.SupportedJujuSeries()
 	sort.Strings(series)
 	sort.Strings(expectedSeries)
@@ -145,7 +145,7 @@ func (s *supportedSeriesSuite) TestLatestLts(c *gc.C) {
 		latest, want string
 	}{
 		{"testseries", "testseries"},
-		{"", "bionic"},
+		{"", "focal"},
 	}
 	for _, test := range table {
 		series.SetLatestLtsForTesting(test.latest)
@@ -158,7 +158,7 @@ func (s *supportedSeriesSuite) TestSetLatestLtsForTesting(c *gc.C) {
 	table := []struct {
 		value, want string
 	}{
-		{"1", "bionic"}, {"2", "1"}, {"3", "2"}, {"4", "3"},
+		{"1", "focal"}, {"2", "1"}, {"3", "2"}, {"4", "3"},
 	}
 	for _, test := range table {
 		got := series.SetLatestLtsForTesting(test.value)
@@ -168,7 +168,7 @@ func (s *supportedSeriesSuite) TestSetLatestLtsForTesting(c *gc.C) {
 
 func (s *supportedSeriesSuite) TestSupportedLts(c *gc.C) {
 	got := series.SupportedLts()
-	want := []string{"xenial", "bionic"}
+	want := []string{"xenial", "bionic", "focal"}
 	c.Assert(got, gc.DeepEquals, want)
 }
 
@@ -223,7 +223,7 @@ func (s *isolationSupportedSeriesSuite) TestBadFilePath(c *gc.C) {
 	filename := filepath.Join(d, "bad-file.csv")
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"artful", "bionic", "centos7", "cosmic", "disco", "eoan", "focal", "genericlinux", "opensuseleap", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial", "yakkety", "zesty"}
+	expectedSeries := []string{"artful", "bionic", "centos7", "centos8", "cosmic", "disco", "eoan", "focal", "genericlinux", "groovy", "opensuseleap", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial", "yakkety", "zesty"}
 	series := series.SupportedSeries()
 	sort.Strings(series)
 	c.Assert(series, gc.DeepEquals, expectedSeries)
