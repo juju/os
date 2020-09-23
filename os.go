@@ -4,6 +4,10 @@
 // Package os provides access to operating system related configuration.
 package os
 
+import (
+	"github.com/juju/errors"
+)
+
 var HostOS = hostOS // for monkey patching
 
 type OSType int
@@ -39,6 +43,26 @@ func (t OSType) String() string {
 	return "Unknown"
 }
 
+// SystemString returns the OS type used by systems.
+// NOTE: systems don't support kubernetes as an os type.
+func (t OSType) SystemString() string {
+	switch t {
+	case Ubuntu:
+		return "ubuntu"
+	case Windows:
+		return "windows"
+	case OSX:
+		return "osx"
+	case CentOS:
+		return "centos"
+	case GenericLinux:
+		return "genericlinux"
+	case OpenSUSE:
+		return "opensuse"
+	}
+	return ""
+}
+
 // EquivalentTo returns true if the OS type is equivalent to another
 // OS type.
 func (t OSType) EquivalentTo(t2 OSType) bool {
@@ -55,4 +79,24 @@ func (t OSType) IsLinux() bool {
 		return true
 	}
 	return false
+}
+
+// ParseSystemOS parses OS type from a system to a OSType.
+func ParseSystemOS(str string) (OSType, error) {
+	switch str {
+	case "ubuntu":
+		return Ubuntu, nil
+	case "windows":
+		return Windows, nil
+	case "osx":
+		return OSX, nil
+	case "centos":
+		return CentOS, nil
+	case "genericlinux":
+		return GenericLinux, nil
+	case "opensuse":
+		return OpenSUSE, nil
+	default:
+		return Unknown, errors.NotValidf("system os type %q", str)
+	}
 }

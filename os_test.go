@@ -61,3 +61,29 @@ func (s *osSuite) TestIsLinux(c *gc.C) {
 	c.Check(Windows.IsLinux(), jc.IsFalse)
 	c.Check(Unknown.IsLinux(), jc.IsFalse)
 }
+
+func (s *osSuite) TestParseSystemOS(c *gc.C) {
+	t, err := ParseSystemOS(Ubuntu.SystemString())
+	c.Check(err, jc.ErrorIsNil)
+	c.Check(t, gc.Equals, Ubuntu)
+
+	t, err = ParseSystemOS(CentOS.SystemString())
+	c.Check(err, jc.ErrorIsNil)
+	c.Check(t, gc.Equals, CentOS)
+
+	t, err = ParseSystemOS(GenericLinux.SystemString())
+	c.Check(err, jc.ErrorIsNil)
+	c.Check(t, gc.Equals, GenericLinux)
+
+	t, err = ParseSystemOS(OpenSUSE.SystemString())
+	c.Check(err, jc.ErrorIsNil)
+	c.Check(t, gc.Equals, OpenSUSE)
+
+	t, err = ParseSystemOS(OSX.SystemString())
+	c.Check(err, jc.ErrorIsNil)
+	c.Check(t, gc.Equals, OSX)
+
+	t, err = ParseSystemOS(Windows.SystemString())
+	c.Check(err, jc.ErrorIsNil)
+	c.Check(t, gc.Equals, Windows)
+}
