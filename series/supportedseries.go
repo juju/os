@@ -4,7 +4,9 @@
 package series
 
 import (
+	"math"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -601,47 +603,96 @@ func SupportedSeries() []string {
 	return series
 }
 
-func allSeriesVersions() map[string]seriesVersion {
-	all := map[string]seriesVersion{}
-	for k, v := range ubuntuSeries {
-		all[k] = v
-	}
-	for k, v := range nonUbuntuSeries {
-		all[k] = v
-	}
-	return all
-}
-
 // SupportedJujuControllerSeries returns a slice of juju supported series that
 // target a controller (bootstrapping).
+//
+// The series are sorted in release version.
+//   - focal (20.4)
+//   - bionic (18.04)
+//   - xenial (16.04)
+//
+// Anything not supported is left out.
 func SupportedJujuControllerSeries() []string {
 	seriesVersionsMutex.Lock()
 	defer seriesVersionsMutex.Unlock()
 	updateSeriesVersionsOnce()
+
+	type namedSeriesVersion struct {
+		Name          string
+		SeriesVersion seriesVersion
+		Version       float64
+	}
+
+	s := make([]namedSeriesVersion, 0, len(ubuntuSeries))
+	for name, series := range ubuntuSeries {
+		ver, err := strconv.ParseFloat(series.Version, 10)
+		if err != nil {
+			ver = math.MaxFloat64
+		}
+
+		s = append(s, namedSeriesVersion{
+			Name:          name,
+			SeriesVersion: series,
+			Version:       ver,
+		})
+	}
+
+	sort.Slice(s, func(i, j int) bool {
+		if s[i].Version > s[j].Version {
+			return true
+		}
+		if s[i].Version < s[j].Version {
+			return false
+		}
+		return s[i].Name < s[j].Name
+	})
+
 	var series []string
-	for s, version := range ubuntuSeries {
-		if !version.Supported {
+	for _, version := range s {
+		if !version.SeriesVersion.Supported {
 			continue
 		}
-		series = append(series, s)
+		series = append(series, version.Name)
 	}
 	return series
 }
 
 // SupportedJujuWorkloadSeries returns a slice of juju supported series that
 // target a workload (deploying a charm).
+//
+// The series are sorted in ubuntu release version, anything that isn't
+// ubuntu release is then sorted by name.
+//   - focal (20.4)
+//   - bionic (18.04)
+//   - xenial (16.04)
+//   - centos7
+//   - centos8
+//   - genericlinux
+//   - kubernetes
+//   - opensuseleap
+//   - win10
+//   - win2008r2
+//
+// Anything not supported is left out.
 func SupportedJujuWorkloadSeries() []string {
+	var result []string
+	// Ensure that ubuntu series are first!
+	result = append(result, SupportedJujuControllerSeries()...)
+
+	// Then perform the surgery on the non ubuntu series.
 	seriesVersionsMutex.Lock()
 	defer seriesVersionsMutex.Unlock()
 	updateSeriesVersionsOnce()
+
 	var series []string
-	for s, version := range allSeriesVersions() {
+	for s, version := range nonUbuntuSeries {
 		if !version.Supported {
 			continue
 		}
 		series = append(series, s)
 	}
-	return series
+	sort.Strings(series)
+	return append(result, series...)
 }
 
 // SupportedJujuSeries returns a slice of juju supported series that also
