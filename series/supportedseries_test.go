@@ -58,11 +58,6 @@ var getOSFromSeriesTests = []struct {
 },
 }
 
-func (s *supportedSeriesSuite) TestDefaultSupportedLTS(c *gc.C) {
-	name := series.DefaultSupportedLTS()
-	c.Assert(name, gc.Equals, "bionic")
-}
-
 func (s *supportedSeriesSuite) TestGetOSFromSeries(c *gc.C) {
 	for _, t := range getOSFromSeriesTests {
 		got, err := series.GetOSFromSeries(t.series)

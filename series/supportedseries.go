@@ -115,12 +115,6 @@ var kubernetesSeries = map[string]string{
 	"kubernetes": "kubernetes",
 }
 
-// DefaultSupportedLTS returns the latest LTS that Juju supports and is
-// compatible with.
-func DefaultSupportedLTS() string {
-	return "bionic"
-}
-
 // seriesVersion represents a ubuntu series that includes the version, if the
 // series is an LTS and the supported defines if Juju supports the series
 // version.
