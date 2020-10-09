@@ -196,9 +196,10 @@ var ubuntuSeries = map[string]seriesVersion{
 		Supported: true,
 	},
 	"focal": {
-		Version:   "20.04",
-		LTS:       true,
-		Supported: true,
+		Version:      "20.04",
+		LTS:          true,
+		Supported:    true,
+		ESMSupported: true,
 	},
 	"groovy": {
 		Version:   "20.10",
@@ -596,25 +597,16 @@ func SupportedSeries() []string {
 	return series
 }
 
-// SupportedJujuControllerSeries returns a slice of juju supported series that
-// target a controller (bootstrapping).
-//
-// The series are sorted in release version.
-//   - focal (20.4)
-//   - bionic (18.04)
-//   - xenial (16.04)
-//
-// Anything not supported is left out.
-func SupportedJujuControllerSeries() []string {
+type namedSeriesVersion struct {
+	Name          string
+	SeriesVersion seriesVersion
+	Version       float64
+}
+
+func ubuntuSeriesSortedByVersion() []namedSeriesVersion {
 	seriesVersionsMutex.Lock()
 	defer seriesVersionsMutex.Unlock()
 	updateSeriesVersionsOnce()
-
-	type namedSeriesVersion struct {
-		Name          string
-		SeriesVersion seriesVersion
-		Version       float64
-	}
 
 	s := make([]namedSeriesVersion, 0, len(ubuntuSeries))
 	for name, series := range ubuntuSeries {
@@ -640,6 +632,21 @@ func SupportedJujuControllerSeries() []string {
 		return s[i].Name < s[j].Name
 	})
 
+	return s
+}
+
+// SupportedJujuControllerSeries returns a slice of juju supported series that
+// target a controller (bootstrapping).
+//
+// The series are sorted in release version.
+//   - focal (20.04)
+//   - bionic (18.04)
+//   - xenial (16.04)
+//
+// Anything not supported is left out.
+func SupportedJujuControllerSeries() []string {
+	s := ubuntuSeriesSortedByVersion()
+
 	var series []string
 	for _, version := range s {
 		if !version.SeriesVersion.Supported {
@@ -655,7 +662,7 @@ func SupportedJujuControllerSeries() []string {
 //
 // The series are sorted in ubuntu release version, anything that isn't
 // ubuntu release is then sorted by name.
-//   - focal (20.4)
+//   - focal (20.04)
 //   - bionic (18.04)
 //   - xenial (16.04)
 //   - centos7
@@ -696,16 +703,21 @@ func SupportedJujuSeries() []string {
 
 // ESMSupportedJujuSeries returns a slice of just juju extended security
 // maintenance supported ubuntu series.
+// The series are sorted in release version.
+//   - focal (20.04)
+//   - bionic (18.04)
+//   - xenial (16.04)
+//
+// Anything not supported is left out.
 func ESMSupportedJujuSeries() []string {
-	seriesVersionsMutex.Lock()
-	defer seriesVersionsMutex.Unlock()
-	updateSeriesVersionsOnce()
+	s := ubuntuSeriesSortedByVersion()
+
 	var series []string
-	for s, version := range ubuntuSeries {
-		if !version.ESMSupported {
+	for _, version := range s {
+		if !version.SeriesVersion.ESMSupported {
 			continue
 		}
-		series = append(series, s)
+		series = append(series, version.Name)
 	}
 	return series
 }
