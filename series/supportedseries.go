@@ -196,10 +196,9 @@ var ubuntuSeries = map[string]seriesVersion{
 		Supported: true,
 	},
 	"focal": {
-		Version: "20.04",
-		LTS:     true,
-		// TODO - hard code to true when focal is released (fallback is to rely on distro-info.csv)
-		Supported: false,
+		Version:   "20.04",
+		LTS:       true,
+		Supported: true,
 	},
 	"groovy": {
 		Version:   "20.10",
