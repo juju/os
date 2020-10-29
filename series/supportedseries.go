@@ -192,8 +192,7 @@ var ubuntuSeries = map[string]seriesVersion{
 		Version: "19.04",
 	},
 	"eoan": {
-		Version:   "19.10",
-		Supported: true,
+		Version: "19.10",
 	},
 	"focal": {
 		Version:      "20.04",
@@ -203,7 +202,7 @@ var ubuntuSeries = map[string]seriesVersion{
 	},
 	"groovy": {
 		Version:   "20.10",
-		Supported: false,
+		Supported: true,
 	},
 }
 

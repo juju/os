@@ -36,7 +36,7 @@ func (s *supportedSeriesSuite) TestSupportedSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
+	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "groovy", "hirsute", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
 	series := series.SupportedSeries()
 	sort.Strings(series)
 	c.Assert(series, gc.DeepEquals, expectedSeries)
@@ -49,7 +49,7 @@ func (s *supportedSeriesSuite) TestUpdateSeriesVersions(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
+	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "groovy", "hirsute", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
 	checkSeries := func() {
 		series := series.SupportedSeries()
 		sort.Strings(series)
@@ -104,7 +104,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuControllerSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"focal", "bionic", "xenial"}
+	expectedSeries := []string{"groovy", "focal", "bionic", "xenial"}
 	series := series.SupportedJujuControllerSeries()
 	c.Assert(series, jc.DeepEquals, expectedSeries)
 }
@@ -116,7 +116,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuWorkloadSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"focal", "bionic", "xenial", "centos7", "centos8", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81"}
+	expectedSeries := []string{"groovy", "focal", "bionic", "xenial", "centos7", "centos8", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81"}
 	series := series.SupportedJujuWorkloadSeries()
 	c.Assert(series, jc.DeepEquals, expectedSeries)
 }
@@ -128,7 +128,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"focal", "bionic", "xenial", "centos7", "centos8", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81"}
+	expectedSeries := []string{"groovy", "focal", "bionic", "xenial", "centos7", "centos8", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81"}
 	series := series.SupportedJujuSeries()
 	c.Assert(series, jc.DeepEquals, expectedSeries)
 }
@@ -198,6 +198,8 @@ const distInfoData = `version,codename,series,created,release,eol,eol-server,eol
 19.04,Disco Dingo,disco,2018-10-18,2019-04-18,2020-01-18
 19.10,Eoan Ermine,eoan,2019-04-18,2019-10-17,2020-07-17
 20.04 LTS,Focal Fossa,focal,2019-10-17,2020-04-23,2025-04-23,2025-04-23,2030-04-23
+20.10,Groovy Gorilla,groovy,2020-04-23,2020-10-22,2021-07-22
+21.04,Hirsute HANIMAL,hirsute,2020-10-22,2021-04-22,2022-01-22
 `
 
 const distInfoData2 = distInfoData + `
@@ -216,7 +218,7 @@ func (s *isolationSupportedSeriesSuite) TestBadFilePath(c *gc.C) {
 	filename := filepath.Join(d, "bad-file.csv")
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"artful", "bionic", "centos7", "centos8", "cosmic", "disco", "eoan", "focal", "genericlinux", "groovy", "opensuseleap", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial", "yakkety", "zesty"}
+	expectedSeries := []string{"artful", "bionic", "centos7", "centos8", "cosmic", "disco", "eoan", "focal", "genericlinux", "groovy", "hirsute", "opensuseleap", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial", "yakkety", "zesty"}
 	series := series.SupportedSeries()
 	sort.Strings(series)
 	c.Assert(series, gc.DeepEquals, expectedSeries)
