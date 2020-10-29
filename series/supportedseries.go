@@ -80,6 +80,7 @@ var seriesVersions = map[string]string{
 	"eoan":             "19.10",
 	"focal":            "20.04",
 	"groovy":           "20.10",
+	"hirsute":          "21.04",
 	"win2008r2":        "win2008r2",
 	"win2012hvr2":      "win2012hvr2",
 	"win2012hv":        "win2012hv",
@@ -203,6 +204,10 @@ var ubuntuSeries = map[string]seriesVersion{
 	"groovy": {
 		Version:   "20.10",
 		Supported: true,
+	},
+	"hirsute": {
+		Version:   "21.04",
+		Supported: false,
 	},
 }
 
