@@ -5,35 +5,36 @@
 package series
 
 import (
-	gomock "github.com/golang/mock/gomock"
 	os "os"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
-// MockFileSystem is a mock of FileSystem interface
+// MockFileSystem is a mock of FileSystem interface.
 type MockFileSystem struct {
 	ctrl     *gomock.Controller
 	recorder *MockFileSystemMockRecorder
 }
 
-// MockFileSystemMockRecorder is the mock recorder for MockFileSystem
+// MockFileSystemMockRecorder is the mock recorder for MockFileSystem.
 type MockFileSystemMockRecorder struct {
 	mock *MockFileSystem
 }
 
-// NewMockFileSystem creates a new mock instance
+// NewMockFileSystem creates a new mock instance.
 func NewMockFileSystem(ctrl *gomock.Controller) *MockFileSystem {
 	mock := &MockFileSystem{ctrl: ctrl}
 	mock.recorder = &MockFileSystemMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockFileSystem) EXPECT() *MockFileSystemMockRecorder {
 	return m.recorder
 }
 
-// Exists mocks base method
+// Exists mocks base method.
 func (m *MockFileSystem) Exists(arg0 string) bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Exists", arg0)
@@ -41,13 +42,13 @@ func (m *MockFileSystem) Exists(arg0 string) bool {
 	return ret0
 }
 
-// Exists indicates an expected call of Exists
+// Exists indicates an expected call of Exists.
 func (mr *MockFileSystemMockRecorder) Exists(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Exists", reflect.TypeOf((*MockFileSystem)(nil).Exists), arg0)
 }
 
-// Open mocks base method
+// Open mocks base method.
 func (m *MockFileSystem) Open(arg0 string) (*os.File, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Open", arg0)
@@ -56,7 +57,7 @@ func (m *MockFileSystem) Open(arg0 string) (*os.File, error) {
 	return ret0, ret1
 }
 
-// Open indicates an expected call of Open
+// Open indicates an expected call of Open.
 func (mr *MockFileSystemMockRecorder) Open(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Open", reflect.TypeOf((*MockFileSystem)(nil).Open), arg0)
