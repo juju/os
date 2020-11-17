@@ -12,7 +12,7 @@ import (
 
 	"github.com/juju/errors"
 	"github.com/juju/loggo"
-	"github.com/juju/os"
+	"github.com/juju/os/v2"
 )
 
 var (

@@ -15,7 +15,7 @@ import (
 	"golang.org/x/sys/windows/registry"
 	gc "gopkg.in/check.v1"
 
-	"github.com/juju/os/series"
+	"github.com/juju/os/v2/series"
 )
 
 const randomPasswordBytes = 18

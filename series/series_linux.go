@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/juju/errors"
-	jujuos "github.com/juju/os"
+	jujuos "github.com/juju/os/v2"
 )
 
 var (
