@@ -11,7 +11,7 @@ import (
 	"sync"
 
 	"github.com/juju/errors"
-	"github.com/juju/os"
+	"github.com/juju/os/v2"
 )
 
 const (

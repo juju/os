@@ -9,7 +9,7 @@ import (
 	gc "gopkg.in/check.v1"
 )
 
-//go:generate mockgen -package series -destination filesystem_mock_test.go github.com/juju/os/series FileSystem
+//go:generate mockgen -package series -destination filesystem_mock_test.go github.com/juju/os/v2/series FileSystem
 
 func Test(t *testing.T) {
 	gc.TestingT(t)
