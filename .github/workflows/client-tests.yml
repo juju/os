@@ -9,37 +9,18 @@ jobs:
       fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest, macOS-latest]
-    env:
-      GO111MODULE: on
 
     steps:
 
       - name: Set up Go 1.14
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@v2.1.3
         with:
           go-version: 1.14
         id: go
 
-      - name: Set GOPATH
-        # temporary fix
-        # see https://github.com/actions/setup-go/issues/14
-        run: |
-          echo "##[set-env name=GOPATH;]$(dirname $GITHUB_WORKSPACE)"
-          echo "##[add-path]$(dirname $GITHUB_WORKSPACE)/bin"
-        shell: bash
-
       - name: Checkout
-        uses: actions/checkout@v1
-        with:
-          path: src/github.com/juju/os
-
-      - name: "Disable CGO"
-        if: (matrix.os == 'windows-latest')
-        run: |
-          echo "##[set-env name=CGO_ENABLED;]0"
-        shell: bash
+        uses: actions/checkout@v2
 
       - name: Test client
         run: |
-          echo "$GOPATH"
           go test -v ./... --check.v
