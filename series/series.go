@@ -20,8 +20,13 @@ const (
 )
 
 var (
-	// TODO(katco): Remove globals (lp:1633571)
-	// Override for testing.
+	// HostSeries returns the series of the machine the current process is
+	// running on (overrideable var for testing).
+	HostSeries func() (string, error) = hostSeries
+
+	// MustHostSeries calls HostSeries and panics if there is an error.
+	//
+	// DEPRECATED: don't use this panicky function.
 	MustHostSeries = mustHostSeries
 
 	seriesOnce sync.Once
@@ -30,9 +35,9 @@ var (
 	seriesErr error
 )
 
-// HostSeries returns the series of the machine the current process is
+// hostSeries returns the series of the machine the current process is
 // running on.
-func HostSeries() (string, error) {
+func hostSeries() (string, error) {
 	var err error
 	seriesOnce.Do(func() {
 		series, err = readSeries()
@@ -53,7 +58,9 @@ func mustHostSeries() string {
 }
 
 // MustOSFromSeries will panic if the series represents an "unknown"
-// operating system
+// operating system.
+//
+// DEPRECATED: don't use this panicky function.
 func MustOSFromSeries(series string) os.OSType {
 	operatingSystem, err := GetOSFromSeries(series)
 	if err != nil {
