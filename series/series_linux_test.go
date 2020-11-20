@@ -158,7 +158,8 @@ var _ = gc.Suite(&readSeriesSuite{})
 func (s *readSeriesSuite) SetUpTest(c *gc.C) {
 	s.CleanupSuite.SetUpTest(c)
 
-	s.AddCleanup(func(*gc.C) { series.RestoreSeriesVersions() })
+	cleanup := series.SetSeriesVersions(make(map[string]string))
+	s.AddCleanup(func(*gc.C) { cleanup() })
 }
 
 var readSeriesTests = []struct {

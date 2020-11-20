@@ -26,8 +26,6 @@ var (
 	HostSeries func() (string, error) = hostSeries
 
 	// MustHostSeries calls HostSeries and panics if there is an error.
-	//
-	// DEPRECATED: don't use this panicky function.
 	MustHostSeries = mustHostSeries
 
 	seriesOnce sync.Once
@@ -63,8 +61,6 @@ func mustHostSeries() string {
 
 // MustOSFromSeries will panic if the series represents an "unknown"
 // operating system.
-//
-// DEPRECATED: don't use this panicky function.
 func MustOSFromSeries(series string) os.OSType {
 	operatingSystem, err := GetOSFromSeries(series)
 	if err != nil {
