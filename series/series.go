@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/juju/errors"
 	"github.com/juju/os"
@@ -20,19 +21,25 @@ const (
 )
 
 var (
-	// TODO(katco): Remove globals (lp:1633571)
-	// Override for testing.
+	// HostSeries returns the series of the machine the current process is
+	// running on (overrideable var for testing).
+	HostSeries func() (string, error) = hostSeries
+
+	// MustHostSeries calls HostSeries and panics if there is an error.
 	MustHostSeries = mustHostSeries
 
 	seriesOnce sync.Once
 	// These are filled in by the first call to hostSeries
 	series    string
 	seriesErr error
+
+	// timeNow is time.Now, but overrideable via TimeNow in tests.
+	timeNow = time.Now
 )
 
-// HostSeries returns the series of the machine the current process is
+// hostSeries returns the series of the machine the current process is
 // running on.
-func HostSeries() (string, error) {
+func hostSeries() (string, error) {
 	var err error
 	seriesOnce.Do(func() {
 		series, err = readSeries()
@@ -53,7 +60,7 @@ func mustHostSeries() string {
 }
 
 // MustOSFromSeries will panic if the series represents an "unknown"
-// operating system
+// operating system.
 func MustOSFromSeries(series string) os.OSType {
 	operatingSystem, err := GetOSFromSeries(series)
 	if err != nil {

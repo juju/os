@@ -4,6 +4,8 @@
 package series_test
 
 import (
+	"time"
+
 	"github.com/juju/testing"
 	jc "github.com/juju/testing/checkers"
 	gc "gopkg.in/check.v1"
@@ -20,8 +22,13 @@ var _ = gc.Suite(&supportedSeriesSuite{})
 
 func (s *supportedSeriesSuite) SetUpTest(c *gc.C) {
 	s.CleanupSuite.SetUpTest(c)
+
 	cleanup := series.SetSeriesVersions(make(map[string]string))
 	s.AddCleanup(func(*gc.C) { cleanup() })
+
+	s.PatchValue(series.TimeNow, func() time.Time {
+		return time.Date(2020, 7, 1, 0, 0, 0, 0, time.UTC)
+	})
 }
 
 var getOSFromSeriesTests = []struct {
