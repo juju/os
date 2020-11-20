@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/juju/errors"
 	"github.com/juju/os"
@@ -33,6 +34,9 @@ var (
 	// These are filled in by the first call to hostSeries
 	series    string
 	seriesErr error
+
+	// timeNow is time.Now, but overrideable via TimeNow in tests.
+	timeNow = time.Now
 )
 
 // hostSeries returns the series of the machine the current process is

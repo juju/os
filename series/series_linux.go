@@ -17,9 +17,6 @@ var (
 	// osReleaseFile is the name of the file that is read in order to determine
 	// the linux type release version.
 	osReleaseFile = "/etc/os-release"
-
-	// timeNow is time.Now, but overrideable via TimeNow in tests.
-	timeNow = time.Now
 )
 
 const (
