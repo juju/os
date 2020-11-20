@@ -105,7 +105,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuControllerSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"bionic", "focal", "xenial"}
+	expectedSeries := []string{"bionic", "eoan", "focal", "xenial"}
 	series := series.SupportedJujuControllerSeries()
 	sort.Strings(series)
 	sort.Strings(expectedSeries)
@@ -119,7 +119,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuWorkloadSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"bionic", "centos7", "centos8", "focal", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
+	expectedSeries := []string{"bionic", "centos7", "centos8", "eoan", "focal", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
 	series := series.SupportedJujuWorkloadSeries()
 	sort.Strings(series)
 	sort.Strings(expectedSeries)
@@ -133,7 +133,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"bionic", "centos7", "centos8", "focal", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
+	expectedSeries := []string{"bionic", "centos7", "centos8", "eoan", "focal", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial"}
 	series := series.SupportedJujuSeries()
 	sort.Strings(series)
 	sort.Strings(expectedSeries)

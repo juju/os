@@ -7,6 +7,7 @@ var (
 	KernelToMajor                 = kernelToMajor
 	MacOSXSeriesFromKernelVersion = macOSXSeriesFromKernelVersion
 	MacOSXSeriesFromMajorVersion  = macOSXSeriesFromMajorVersion
+	TimeNow                       = &timeNow
 
 	origSeriesVersions map[string]string
 	origUbuntuSeries   map[string]seriesVersion
