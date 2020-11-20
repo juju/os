@@ -8,16 +8,7 @@ var (
 	MacOSXSeriesFromKernelVersion = macOSXSeriesFromKernelVersion
 	MacOSXSeriesFromMajorVersion  = macOSXSeriesFromMajorVersion
 	TimeNow                       = &timeNow
-
-	origUbuntuSeries map[string]seriesVersion
 )
-
-func init() {
-	origUbuntuSeries = make(map[string]seriesVersion)
-	for k, v := range ubuntuSeries {
-		origUbuntuSeries[k] = v
-	}
-}
 
 func SetSeriesVersions(value map[string]string) func() {
 	origVersions := seriesVersions
@@ -35,13 +26,4 @@ func SetSeriesVersions(value map[string]string) func() {
 // UbuntuSupportedSeries exports the ubuntuSeries for testing.
 func UbuntuSupportedSeries() map[string]seriesVersion {
 	return ubuntuSeries
-}
-
-// RestoreUbuntuSeries restore the value of ubuntuSeries to a copy of the
-// original, for use in test cleanup.
-func RestoreUbuntuSeries() {
-	ubuntuSeries = make(map[string]seriesVersion)
-	for k, v := range origUbuntuSeries {
-		ubuntuSeries[k] = v
-	}
 }

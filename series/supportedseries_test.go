@@ -26,8 +26,6 @@ func (s *supportedSeriesSuite) SetUpTest(c *gc.C) {
 	cleanup := series.SetSeriesVersions(make(map[string]string))
 	s.AddCleanup(func(*gc.C) { cleanup() })
 
-	s.AddCleanup(func(*gc.C) { series.RestoreUbuntuSeries() })
-
 	s.PatchValue(series.TimeNow, func() time.Time {
 		return time.Date(2020, 7, 1, 0, 0, 0, 0, time.UTC)
 	})
