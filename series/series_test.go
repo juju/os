@@ -113,15 +113,10 @@ var _ = gc.Suite(&seriesSuite{})
 
 func (s *seriesSuite) TestHostSeriesOverride(c *gc.C) {
 	// Really just tests that HostSeries is overridable
-	ser, err := series.HostSeries()
-	c.Assert(err, jc.ErrorIsNil)
-	c.Assert(ser, gc.Not(gc.Equals), "freelunch")
-
 	s.PatchValue(&series.HostSeries, func() (string, error) {
 		return "freelunch", nil
 	})
-
-	ser, err = series.HostSeries()
+	ser, err := series.HostSeries()
 	c.Assert(err, jc.ErrorIsNil)
 	c.Assert(ser, gc.Equals, "freelunch")
 }

@@ -22,6 +22,9 @@ func (s *supportedSeriesSuite) SetUpTest(c *gc.C) {
 	s.CleanupSuite.SetUpTest(c)
 	cleanup := series.SetSeriesVersions(make(map[string]string))
 	s.AddCleanup(func(*gc.C) { cleanup() })
+
+	series.RestoreUbuntuSeries()
+	s.AddCleanup(func(*gc.C) { series.RestoreUbuntuSeries() })
 }
 
 var getOSFromSeriesTests = []struct {
