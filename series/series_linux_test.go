@@ -155,6 +155,13 @@ type readSeriesSuite struct {
 
 var _ = gc.Suite(&readSeriesSuite{})
 
+func (s *readSeriesSuite) SetUpTest(c *gc.C) {
+	s.CleanupSuite.SetUpTest(c)
+
+	cleanup := series.SetSeriesVersions(make(map[string]string))
+	s.AddCleanup(func(*gc.C) { cleanup() })
+}
+
 var readSeriesTests = []struct {
 	contents string
 	series   string

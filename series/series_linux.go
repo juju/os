@@ -89,7 +89,7 @@ func updateLocalSeriesVersions() error {
 		return errors.Trace(err)
 	}
 
-	now := time.Now().UTC()
+	now := timeNow().UTC()
 
 	for seriesName, version := range distroInfo.info {
 		var esm bool

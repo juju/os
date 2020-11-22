@@ -7,6 +7,7 @@ var (
 	KernelToMajor                 = kernelToMajor
 	MacOSXSeriesFromKernelVersion = macOSXSeriesFromKernelVersion
 	MacOSXSeriesFromMajorVersion  = macOSXSeriesFromMajorVersion
+	TimeNow                       = &timeNow
 )
 
 func SetSeriesVersions(value map[string]string) func() {
