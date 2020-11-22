@@ -27,7 +27,7 @@ func (s *supportedSeriesSuite) SetUpTest(c *gc.C) {
 	s.AddCleanup(func(*gc.C) { cleanup() })
 
 	s.PatchValue(series.TimeNow, func() time.Time {
-		return time.Date(2020, 7, 1, 0, 0, 0, 0, time.UTC)
+		return time.Date(2020, 11, 1, 0, 0, 0, 0, time.UTC)
 	})
 }
 
