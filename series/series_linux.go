@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/juju/errors"
 	jujuos "github.com/juju/os"
@@ -17,13 +16,6 @@ var (
 	// osReleaseFile is the name of the file that is read in order to determine
 	// the linux type release version.
 	osReleaseFile = "/etc/os-release"
-)
-
-const (
-	// this is just for an approximation in an error case, when the eol
-	// date has a parse error.
-	day  = 24 * time.Hour
-	year = 365 * day
 )
 
 func readSeries() (string, error) {
@@ -61,7 +53,7 @@ func getValue(from map[string]string, val string) (string, error) {
 	return "unknown", errors.New("could not determine series")
 }
 
-func getValueFromSeriesVersion(from map[string]seriesVersion, val string) (string, error) {
+func getValueFromSeriesVersion(from map[string]SeriesVersionInfo, val string) (string, error) {
 	for s, version := range from {
 		if version.Version == val {
 			return s, nil
@@ -79,6 +71,14 @@ func ReleaseVersion() string {
 		return ""
 	}
 	return release["VERSION_ID"]
+}
+
+// LocalSeriesVersionInfo returns the local series versions and OS type.
+func LocalSeriesVersionInfo() (jujuos.OSType, map[string]SeriesVersionInfo, error) {
+	if err := updateLocalSeriesVersions(); err != nil {
+		return jujuos.Unknown, nil, errors.Trace(err)
+	}
+	return jujuos.Ubuntu, ubuntuSeries, nil
 }
 
 // updateLocalSeriesVersions updates seriesVersions from
@@ -111,7 +111,7 @@ func updateLocalSeriesVersions() error {
 			continue
 		}
 
-		ubuntuSeries[seriesName] = seriesVersion{
+		ubuntuSeries[seriesName] = SeriesVersionInfo{
 			Version:                  version.Version,
 			Supported:                supported,
 			ESMSupported:             esm,
