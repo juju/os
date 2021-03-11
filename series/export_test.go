@@ -24,6 +24,6 @@ func SetSeriesVersions(value map[string]string) func() {
 }
 
 // UbuntuSupportedSeries exports the ubuntuSeries for testing.
-func UbuntuSupportedSeries() map[string]seriesVersion {
+func UbuntuSupportedSeries() map[string]SeriesVersionInfo {
 	return ubuntuSeries
 }

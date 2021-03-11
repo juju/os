@@ -14,7 +14,7 @@ var (
 // This is not concurrent safe.
 func HideUbuntuSeries() func() {
 	origSeries := ubuntuSeries
-	ubuntuSeries = make(map[string]seriesVersion)
+	ubuntuSeries = make(map[string]SeriesVersionInfo)
 	return func() {
 		ubuntuSeries = origSeries
 	}
