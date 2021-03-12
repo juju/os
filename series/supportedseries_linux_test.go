@@ -70,6 +70,29 @@ func (s *supportedSeriesSuite) TestUpdateSeriesVersions(c *gc.C) {
 	checkSeries()
 }
 
+func (s *supportedSeriesSuite) TestLocalSeriesVersionInfo(c *gc.C) {
+	d := c.MkDir()
+	filename := filepath.Join(d, "ubuntu.csv")
+	err := ioutil.WriteFile(filename, []byte(distInfoData), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+	s.PatchValue(series.UbuntuDistroInfoPath, filename)
+
+	err = ioutil.WriteFile(filename, []byte(distInfoData2), 0644)
+	c.Assert(err, jc.ErrorIsNil)
+
+	gotOs, updated, err := series.LocalSeriesVersionInfo()
+	c.Assert(err, jc.ErrorIsNil)
+	c.Assert(gotOs, gc.Equals, os.Ubuntu)
+	c.Assert(updated, jc.DeepEquals, series.UbuntuSupportedSeries())
+	ornery, ok := updated["ornery"]
+	c.Assert(ok, jc.IsTrue)
+	c.Assert(ornery, jc.DeepEquals, series.SeriesVersionInfo{
+		Version:                  "94.04 LTS",
+		LTS:                      true,
+		CreatedByLocalDistroInfo: true,
+	})
+}
+
 func (s *supportedSeriesSuite) TestESMSupportedJujuSeries(c *gc.C) {
 	d := c.MkDir()
 	filename := filepath.Join(d, "ubuntu.csv")
