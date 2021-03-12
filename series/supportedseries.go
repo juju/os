@@ -116,10 +116,10 @@ var kubernetesSeries = map[string]string{
 	"kubernetes": "kubernetes",
 }
 
-// seriesVersion represents a ubuntu series that includes the version, if the
+// SeriesVersionInfo represents a ubuntu series that includes the version, if the
 // series is an LTS and the supported defines if Juju supports the series
 // version.
-type seriesVersion struct {
+type SeriesVersionInfo struct {
 	Version string
 	// LTS provides a lookup for a LTS series.  Like seriesVersions,
 	// the values here are current at the time of writing.
@@ -138,7 +138,7 @@ type seriesVersion struct {
 	CreatedByLocalDistroInfo bool
 }
 
-var ubuntuSeries = map[string]seriesVersion{
+var ubuntuSeries = map[string]SeriesVersionInfo{
 	"precise": {
 		Version: "12.04",
 	},
@@ -211,7 +211,7 @@ var ubuntuSeries = map[string]seriesVersion{
 	},
 }
 
-var nonUbuntuSeries = map[string]seriesVersion{
+var nonUbuntuSeries = map[string]SeriesVersionInfo{
 	"win2008r2": {
 		Version:   "win2008r2",
 		Supported: true,
@@ -603,7 +603,7 @@ func SupportedSeries() []string {
 
 type namedSeriesVersion struct {
 	Name          string
-	SeriesVersion seriesVersion
+	SeriesVersion SeriesVersionInfo
 	Version       float64
 }
 

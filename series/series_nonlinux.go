@@ -5,13 +5,22 @@
 
 package series
 
-import "os"
+import (
+	"os"
+
+	jujuos "github.com/juju/os"
+)
 
 // TODO(ericsnow) Refactor dependents so we can remove this for non-linux.
 
 // ReleaseVersion is a function that has no meaning except on linux.
 func ReleaseVersion() string {
 	return ""
+}
+
+// LocalSeriesVersionInfo is a function that has no meaning except on Linux.
+func LocalSeriesVersionInfo() (jujuos.OSType, map[string]SeriesVersionInfo, error) {
+	return jujuos.Unknown, nil, nil
 }
 
 func updateLocalSeriesVersions() error {
