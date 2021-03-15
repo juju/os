@@ -8,7 +8,7 @@ package series
 import (
 	"os"
 
-	jujuos "github.com/juju/os"
+	jujuos "github.com/juju/os/v2"
 )
 
 // TODO(ericsnow) Refactor dependents so we can remove this for non-linux.
