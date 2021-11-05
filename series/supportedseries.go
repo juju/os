@@ -81,6 +81,8 @@ var seriesVersions = map[string]string{
 	"focal":            "20.04",
 	"groovy":           "20.10",
 	"hirsute":          "21.04",
+	"impish":           "21.10",
+	"jammy":            "22.04",
 	"win2008r2":        "win2008r2",
 	"win2012hvr2":      "win2012hvr2",
 	"win2012hv":        "win2012hv",
@@ -208,6 +210,12 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 	"hirsute": {
 		Version:   "21.04",
 		Supported: false,
+	},
+	"jammy": {
+		Version:      "22.04",
+		LTS:          true,
+		Supported:    false,
+		ESMSupported: true,
 	},
 }
 
