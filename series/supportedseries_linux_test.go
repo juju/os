@@ -36,7 +36,7 @@ func (s *supportedSeriesSuite) TestSupportedSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "groovy", "hirsute", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
+	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "groovy", "hirsute", "impish", "jammy", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
 	series := series.SupportedSeries()
 	sort.Strings(series)
 	c.Assert(series, gc.DeepEquals, expectedSeries)
@@ -49,7 +49,7 @@ func (s *supportedSeriesSuite) TestUpdateSeriesVersions(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "groovy", "hirsute", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
+	expectedSeries := []string{"artful", "bionic", "cosmic", "disco", "eoan", "focal", "groovy", "hirsute", "impish", "jammy", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "xenial", "yakkety", "zesty"}
 	checkSeries := func() {
 		series := series.SupportedSeries()
 		sort.Strings(series)
@@ -222,7 +222,9 @@ const distInfoData = `version,codename,series,created,release,eol,eol-server,eol
 19.10,Eoan Ermine,eoan,2019-04-18,2019-10-17,2020-07-17
 20.04 LTS,Focal Fossa,focal,2019-10-17,2020-04-23,2025-04-23,2025-04-23,2030-04-23
 20.10,Groovy Gorilla,groovy,2020-04-23,2020-10-22,2021-07-22
-21.04,Hirsute HANIMAL,hirsute,2020-10-22,2021-04-22,2022-01-22
+21.04,Hirsute Hippo,hirsute,2020-10-22,2021-04-22,2022-01-20
+21.10,Impish Indri,impish,2021-04-22,2021-10-14,2022-07-14
+22.04 LTS,Jammy Jellyfish,jammy,2021-10-14,2022-04-21,2027-04-21,2027-04-21,2032-04-21
 `
 
 const distInfoData2 = distInfoData + `
@@ -241,7 +243,7 @@ func (s *isolationSupportedSeriesSuite) TestBadFilePath(c *gc.C) {
 	filename := filepath.Join(d, "bad-file.csv")
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"artful", "bionic", "centos7", "centos8", "cosmic", "disco", "eoan", "focal", "genericlinux", "groovy", "hirsute", "opensuseleap", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial", "yakkety", "zesty"}
+	expectedSeries := []string{"artful", "bionic", "centos7", "centos8", "cosmic", "disco", "eoan", "focal", "genericlinux", "groovy", "hirsute", "impish", "jammy", "opensuseleap", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial", "yakkety", "zesty"}
 	series := series.SupportedSeries()
 	sort.Strings(series)
 	c.Assert(series, gc.DeepEquals, expectedSeries)
