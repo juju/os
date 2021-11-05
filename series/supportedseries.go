@@ -211,11 +211,15 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 		Version:   "21.04",
 		Supported: false,
 	},
+	"impish": {
+		Version:   "21.10",
+		Supported: false,
+	},
 	"jammy": {
 		Version:      "22.04",
 		LTS:          true,
 		Supported:    false,
-		ESMSupported: true,
+		ESMSupported: false,
 	},
 }
 
@@ -716,6 +720,7 @@ func SupportedJujuSeries() []string {
 // ESMSupportedJujuSeries returns a slice of just juju extended security
 // maintenance supported ubuntu series.
 // The series are sorted in release version.
+//   - jammy (22.04)
 //   - focal (20.04)
 //   - bionic (18.04)
 //   - xenial (16.04)
