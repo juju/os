@@ -98,6 +98,7 @@ var seriesVersions = map[string]string{
 	"win10":            "win10",
 	"centos7":          "centos7",
 	"centos8":          "centos8",
+	"centos9":          "centos9",
 	"opensuseleap":     "opensuse42",
 	genericLinuxSeries: genericLinuxVersion,
 }
@@ -108,6 +109,7 @@ var versionSeries = reverseSeriesVersion()
 var centosSeries = map[string]string{
 	"centos7": "centos7",
 	"centos8": "centos8",
+	"centos9": "centos9",
 }
 
 var opensuseSeries = map[string]string{
@@ -282,6 +284,10 @@ var nonUbuntuSeries = map[string]SeriesVersionInfo{
 	},
 	"centos8": {
 		Version:   "centos8",
+		Supported: true,
+	},
+	"centos9": {
+		Version:   "centos9",
 		Supported: true,
 	},
 	"opensuseleap": {
