@@ -83,6 +83,61 @@ func (s *supportedSeriesSuite) TestUnknownOSFromSeries(c *gc.C) {
 	c.Assert(err, gc.ErrorMatches, `unknown OS for series: "Xuanhuaceratops"`)
 }
 
+var getOSFromSeriesBaseOSTests = []struct {
+	series, baseOS string
+	want           os.OSType
+	err            string
+}{{
+	series: "precise",
+	baseOS: "ubuntu",
+	want:   os.Ubuntu,
+}, {
+	series: "win2012r2",
+	baseOS: "windows",
+	want:   os.Windows,
+}, {
+	series: "win2016nano",
+	baseOS: "windows",
+	want:   os.Windows,
+}, {
+	series: "mountainlion",
+	baseOS: "osx",
+	want:   os.OSX,
+}, {
+	series: "7",
+	baseOS: "centos",
+	want:   os.CentOS,
+}, {
+	series: "opensuseleap",
+	baseOS: "opensuse",
+	want:   os.OpenSUSE,
+}, {
+	series: "kubernetes",
+	baseOS: "kubernetes",
+	want:   os.Kubernetes,
+}, {
+	series: "genericlinux",
+	baseOS: "genericlinux",
+	want:   os.GenericLinux,
+}, {
+	series: "",
+	err:    "series \"\" not valid",
+},
+}
+
+func (s *supportedSeriesSuite) TestGetOSFromSeriesWithBaseOS(c *gc.C) {
+	for _, t := range getOSFromSeriesBaseOSTests {
+		c.Logf("series %q os %q", t.series, t.baseOS)
+		got, err := series.GetOSFromSeriesWithBaseOS(t.series, t.baseOS)
+		if t.err != "" {
+			c.Assert(err, gc.ErrorMatches, t.err)
+		} else {
+			c.Check(err, jc.ErrorIsNil)
+			c.Assert(got, gc.Equals, t.want)
+		}
+	}
+}
+
 func setSeriesTestData() {
 	series.SetSeriesVersions(map[string]string{
 		"trusty":       "14.04",
