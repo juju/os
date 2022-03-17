@@ -450,6 +450,34 @@ func getOSFromSeries(series string) (os.OSType, error) {
 	return os.Unknown, errors.Trace(unknownOSForSeriesError(series))
 }
 
+// GetOSFromSeriesWithBaseOS will return the operating system based
+// on the series and optional os base that is passed to it
+func GetOSFromSeriesWithBaseOS(series, baseOS string) (os.OSType, error) {
+	if series == "" {
+		return os.Unknown, errors.NotValidf("series %q", series)
+	}
+	osType, err := getOSFromSeriesWithBaseOS(series, baseOS)
+	if err == nil {
+		return osType, nil
+	}
+
+	seriesVersionsMutex.Lock()
+	defer seriesVersionsMutex.Unlock()
+
+	updateSeriesVersionsOnce()
+	return getOSFromSeriesWithBaseOS(series, baseOS)
+}
+
+func getOSFromSeriesWithBaseOS(series, baseOS string) (os.OSType, error) {
+	switch strings.ToLower(baseOS) {
+	case "centos":
+		if _, ok := centosSeries["centos"+series]; ok {
+			return os.CentOS, nil
+		}
+	}
+	return getOSFromSeries(series)
+}
+
 var (
 	seriesVersionsMutex sync.Mutex
 )
