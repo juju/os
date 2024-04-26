@@ -127,7 +127,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuControllerSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"groovy", "focal", "bionic", "xenial"}
+	expectedSeries := []string{"focal"}
 	series := series.SupportedJujuControllerSeries()
 	c.Assert(series, jc.DeepEquals, expectedSeries)
 }
@@ -139,7 +139,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuWorkloadSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"groovy", "focal", "bionic", "xenial", "centos7", "centos8", "centos9", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81"}
+	expectedSeries := []string{"focal", "centos7", "centos8", "centos9", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81"}
 	series := series.SupportedJujuWorkloadSeries()
 	c.Assert(series, jc.DeepEquals, expectedSeries)
 }
@@ -151,7 +151,7 @@ func (s *supportedSeriesSuite) TestSupportedJujuSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"groovy", "focal", "bionic", "xenial", "centos7", "centos8", "centos9", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81"}
+	expectedSeries := []string{"focal", "centos7", "centos8", "centos9", "genericlinux", "kubernetes", "opensuseleap", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81"}
 	series := series.SupportedJujuSeries()
 	c.Assert(series, jc.DeepEquals, expectedSeries)
 }
@@ -184,7 +184,7 @@ func (s *supportedSeriesSuite) TestSetLatestLtsForTesting(c *gc.C) {
 
 func (s *supportedSeriesSuite) TestSupportedLts(c *gc.C) {
 	got := series.SupportedLts()
-	want := []string{"xenial", "bionic", "focal"}
+	want := []string{"focal"}
 	c.Assert(got, gc.DeepEquals, want)
 }
 

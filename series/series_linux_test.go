@@ -70,11 +70,11 @@ func (s *linuxVersionSuite) TestOSVersion(c *gc.C) {
 	c.Assert(precise.CreatedByLocalDistroInfo, jc.IsFalse)
 	c.Assert(precise.Supported, jc.IsFalse)
 
-	// Bionic isn't poly-filled and is supported.
+	// Bionic isn't poly-filled and isn't supported.
 	bionic, ok := series["bionic"]
 	c.Assert(ok, jc.IsTrue)
 	c.Assert(bionic.CreatedByLocalDistroInfo, jc.IsFalse)
-	c.Assert(bionic.Supported, jc.IsTrue)
+	c.Assert(bionic.Supported, jc.IsFalse)
 
 	// Spock is poly-filled and isn't supported.
 	spock, ok := series["spock"]

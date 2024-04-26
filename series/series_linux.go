@@ -106,14 +106,14 @@ func updateLocalSeriesVersions() error {
 		supported := version.Supported(now)
 
 		if us, ok := ubuntuSeries[seriesName]; ok {
-			us.Supported = supported
+			us.Supported = us.Supported && supported
 			ubuntuSeries[seriesName] = us
 			continue
 		}
 
 		ubuntuSeries[seriesName] = SeriesVersionInfo{
 			Version:                  version.Version,
-			Supported:                supported,
+			Supported:                false,
 			ESMSupported:             esm,
 			LTS:                      version.LTS(),
 			CreatedByLocalDistroInfo: true,

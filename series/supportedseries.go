@@ -172,7 +172,6 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 	"xenial": {
 		Version:      "16.04",
 		LTS:          true,
-		Supported:    true,
 		ESMSupported: true,
 	},
 	"yakkety": {
@@ -187,7 +186,6 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 	"bionic": {
 		Version:      "18.04",
 		LTS:          true,
-		Supported:    true,
 		ESMSupported: true,
 	},
 	"cosmic": {
@@ -222,6 +220,24 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 		LTS:          true,
 		Supported:    false,
 		ESMSupported: false,
+	},
+	"kinetic": {
+		Version:   "22.10",
+		Supported: false,
+	},
+	"lunar": {
+		Version:   "23.04",
+		Supported: false,
+	},
+	"mantic": {
+		Version:   "23.10",
+		Supported: false,
+	},
+	"noble": {
+		Version:      "24.40",
+		LTS:          true,
+		ESMSupported: false,
+		Supported:    false,
 	},
 }
 
