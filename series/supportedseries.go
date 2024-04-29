@@ -83,6 +83,10 @@ var seriesVersions = map[string]string{
 	"hirsute":          "21.04",
 	"impish":           "21.10",
 	"jammy":            "22.04",
+	"kinetic":          "22.10",
+	"lunar":            "23.04",
+	"mantic":           "23.10",
+	"noble":            "24.04",
 	"win2008r2":        "win2008r2",
 	"win2012hvr2":      "win2012hvr2",
 	"win2012hv":        "win2012hv",
@@ -218,8 +222,8 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 	"jammy": {
 		Version:      "22.04",
 		LTS:          true,
-		Supported:    false,
-		ESMSupported: false,
+		Supported:    true,
+		ESMSupported: true,
 	},
 	"kinetic": {
 		Version:   "22.10",

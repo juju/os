@@ -100,7 +100,7 @@ func (s *supportedSeriesSuite) TestESMSupportedJujuSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"focal", "bionic", "xenial", "trusty"}
+	expectedSeries := []string{"jammy", "focal", "bionic", "xenial", "trusty"}
 	series := series.ESMSupportedJujuSeries()
 	c.Assert(series, jc.DeepEquals, expectedSeries)
 }
@@ -243,7 +243,7 @@ func (s *isolationSupportedSeriesSuite) TestBadFilePath(c *gc.C) {
 	filename := filepath.Join(d, "bad-file.csv")
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"artful", "bionic", "centos7", "centos8", "centos9", "cosmic", "disco", "eoan", "focal", "genericlinux", "groovy", "hirsute", "impish", "jammy", "opensuseleap", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial", "yakkety", "zesty"}
+	expectedSeries := []string{"artful", "bionic", "centos7", "centos8", "centos9", "cosmic", "disco", "eoan", "focal", "genericlinux", "groovy", "hirsute", "impish", "jammy", "kinetic", "lunar", "mantic", "noble", "opensuseleap", "precise", "quantal", "raring", "saucy", "trusty", "utopic", "vivid", "wily", "win10", "win2008r2", "win2012", "win2012hv", "win2012hvr2", "win2012r2", "win2016", "win2016hv", "win2016nano", "win2019", "win7", "win8", "win81", "xenial", "yakkety", "zesty"}
 	series := series.SupportedSeries()
 	sort.Strings(series)
 	c.Assert(series, gc.DeepEquals, expectedSeries)
