@@ -83,6 +83,10 @@ var seriesVersions = map[string]string{
 	"hirsute":          "21.04",
 	"impish":           "21.10",
 	"jammy":            "22.04",
+	"kinetic":          "22.10",
+	"lunar":            "23.04",
+	"mantic":           "23.10",
+	"noble":            "24.04",
 	"win2008r2":        "win2008r2",
 	"win2012hvr2":      "win2012hvr2",
 	"win2012hv":        "win2012hv",
@@ -172,7 +176,6 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 	"xenial": {
 		Version:      "16.04",
 		LTS:          true,
-		Supported:    true,
 		ESMSupported: true,
 	},
 	"yakkety": {
@@ -187,7 +190,6 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 	"bionic": {
 		Version:      "18.04",
 		LTS:          true,
-		Supported:    true,
 		ESMSupported: true,
 	},
 	"cosmic": {
@@ -220,8 +222,26 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 	"jammy": {
 		Version:      "22.04",
 		LTS:          true,
-		Supported:    false,
+		Supported:    true,
+		ESMSupported: true,
+	},
+	"kinetic": {
+		Version:   "22.10",
+		Supported: false,
+	},
+	"lunar": {
+		Version:   "23.04",
+		Supported: false,
+	},
+	"mantic": {
+		Version:   "23.10",
+		Supported: false,
+	},
+	"noble": {
+		Version:      "24.40",
+		LTS:          true,
 		ESMSupported: false,
+		Supported:    false,
 	},
 }
 
