@@ -238,7 +238,7 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 		Supported: false,
 	},
 	"noble": {
-		Version:      "24.40",
+		Version:      "24.04",
 		LTS:          true,
 		ESMSupported: false,
 		Supported:    false,
