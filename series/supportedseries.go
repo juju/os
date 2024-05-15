@@ -156,9 +156,8 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 		Version: "13.10",
 	},
 	"trusty": {
-		Version:      "14.04",
-		LTS:          true,
-		ESMSupported: true,
+		Version: "14.04",
+		LTS:     true,
 	},
 	"utopic": {
 		Version: "14.10",
@@ -170,10 +169,8 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 		Version: "15.10",
 	},
 	"xenial": {
-		Version:      "16.04",
-		LTS:          true,
-		Supported:    true,
-		ESMSupported: true,
+		Version: "16.04",
+		LTS:     true,
 	},
 	"yakkety": {
 		Version: "16.10",
@@ -185,10 +182,8 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 		Version: "17.10",
 	},
 	"bionic": {
-		Version:      "18.04",
-		LTS:          true,
-		Supported:    true,
-		ESMSupported: true,
+		Version: "18.04",
+		LTS:     true,
 	},
 	"cosmic": {
 		Version: "18.10",
@@ -206,22 +201,34 @@ var ubuntuSeries = map[string]SeriesVersionInfo{
 		ESMSupported: true,
 	},
 	"groovy": {
-		Version:   "20.10",
-		Supported: true,
+		Version: "20.10",
 	},
 	"hirsute": {
-		Version:   "21.04",
-		Supported: false,
+		Version: "21.04",
 	},
 	"impish": {
-		Version:   "21.10",
-		Supported: false,
+		Version: "21.10",
 	},
 	"jammy": {
 		Version:      "22.04",
 		LTS:          true,
-		Supported:    false,
-		ESMSupported: false,
+		Supported:    true,
+		ESMSupported: true,
+	},
+	"kinetic": {
+		Version: "22.10",
+	},
+	"lunar": {
+		Version: "23.04",
+	},
+	"mantic": {
+		Version: "23.10",
+	},
+	"noble": {
+		Version:      "24.04",
+		LTS:          true,
+		Supported:    true,
+		ESMSupported: true,
 	},
 }
 

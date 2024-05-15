@@ -100,7 +100,7 @@ func (s *supportedSeriesSuite) TestESMSupportedJujuSeries(c *gc.C) {
 	c.Assert(err, jc.ErrorIsNil)
 	s.PatchValue(series.UbuntuDistroInfoPath, filename)
 
-	expectedSeries := []string{"focal", "bionic", "xenial", "trusty"}
+	expectedSeries := []string{"noble", "jammy", "focal"}
 	series := series.ESMSupportedJujuSeries()
 	c.Assert(series, jc.DeepEquals, expectedSeries)
 }
